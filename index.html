@@ -65,14 +65,41 @@
         html.dark-mode .accordion-header { background-color: rgba(255,255,255,0.03); }
         .accordion-header:hover { background-color: rgba(0,0,0,0.04); }
         html.dark-mode .accordion-header:hover { background-color: rgba(255,255,255,0.06); }
-        .accordion-header strong { font-size: 1.1em; color: var(--text-primary-current); }
+        .accordion-header strong { font-size: 1.1em; color: var(--text-primary-current); } /* This refers to accordion headers */
         .accordion-icon { font-size: 1em; color: var(--accent-primary-current); transition: transform var(--transition-speed); }
         .accordion-item.active .accordion-icon { transform: rotate(45deg); }
-        .accordion-content { max-height: 100 px; overflow: false; padding: 0 20px; background-color: transparent; transition: max-height 0.5s ease-out, padding var(--transition-speed); }
+        .accordion-content { max-height: 0px; overflow: hidden; padding: 0 20px; background-color: transparent; transition: max-height 0.5s ease-out, padding var(--transition-speed); }
         .accordion-item.active .accordion-content { max-height: 1500px; padding: 20px; }
         .accordion-content ul { list-style-position: inside; padding-left: 5px; }
         .accordion-content ul li { margin-bottom: 8px; }
         .loading-message { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.2em; color: var(--text-secondary-current); text-align: center; padding: 20px; }
+        
+        /* Custom Graph Tooltip Styles */
+        #graph-tooltip {
+            display: none;
+            position: absolute; /* Will be fixed in JS if it needs to be relative to body */
+            background: var(--bg-glass-current);
+            color: var(--text-primary-current);
+            padding: 10px 15px;
+            border-radius: var(--border-radius-small);
+            box-shadow: var(--shadow-current);
+            z-index: 10000; /* High z-index */
+            pointer-events: none; /* Important so it doesn't interfere with graph events */
+            max-width: 320px;
+            font-size: 0.9em;
+            border: 1px solid var(--border-glass-current);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            line-height: 1.4;
+        }
+        #graph-tooltip strong { /* This will style the main node name title in the tooltip */
+            color: var(--accent-primary-current);
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600; /* Ensure it's bold */
+        }
+        /* End Custom Graph Tooltip Styles */
+
         @media (max-width: 768px) {
             .page-title { font-size: 1.8em; margin-bottom: 10px; width:100%; text-align:center; }
             .header-controls { width: 100%; justify-content: center; }
@@ -82,6 +109,7 @@
          @media (max-width: 480px) {
             #visNetwork { height: 60vh; }
         }
+
     </style>
 <style type="text/css">.graph-info-msg {
   top: 50%;
@@ -109,18 +137,7 @@
   cursor: grabbing;
   cursor: -moz-grabbing;
   cursor: -webkit-grabbing;
-}</style><style type="text/css">.float-tooltip-kap {
-  position: absolute;
-  width: max-content; /* prevent shrinking near right edge */
-  max-width: max(50%, 150px);
-  padding: 3px 5px;
-  border-radius: 3px;
-  font: 12px sans-serif;
-  color: #eee;
-  background: rgba(0,0,0,0.6);
-  pointer-events: none;
-}
-</style><style type="text/css">.scene-nav-info {
+}</style><style type="text/css">.scene-nav-info {
   position: absolute;
   bottom: 5px;
   width: 100%;
@@ -150,26 +167,26 @@
         </header>
 
         <section class="content-section" id="roadmap-visualization">
-            <h3>Career Visualization (3D) - Click nodes to explore!</h3>
-            <div id="visNetwork" style="border: 1px solid rgba(55, 58, 63, 0.85); --darkreader-inline-border-top: var(--darkreader-border-373a3fd9, rgba(121, 112, 99, 0.85)); --darkreader-inline-border-right: var(--darkreader-border-373a3fd9, rgba(121, 112, 99, 0.85)); --darkreader-inline-border-bottom: var(--darkreader-border-373a3fd9, rgba(121, 112, 99, 0.85)); --darkreader-inline-border-left: var(--darkreader-border-373a3fd9, rgba(121, 112, 99, 0.85));" data-darkreader-inline-border-top="" data-darkreader-inline-border-right="" data-darkreader-inline-border-bottom="" data-darkreader-inline-border-left=""><div style="position: relative;"><div><div class="scene-container" style="position: relative; width: 1517px; height: 672px;"><div class="scene-nav-info">Left-click: rotate, Mouse-wheel/middle-click: zoom, Right-click: pan</div><div class="float-tooltip-kap" style="left: 1184.78px; display: none; top: 351.851px; transform: translate(-78.1001%, 21px);"></div><canvas data-engine="three.js r152" width="1365" height="604" style="display: block; touch-action: none; width: 1517px; height: 672px;" class="clickable"></canvas></div></div><div class="graph-info-msg"></div></div></div>
+            <h3>Career Visualization (3D) - Click nodes to explore, hover for details!</h3>
+            <div id="visNetwork" style="border: 1px solid rgba(55, 58, 63, 0.85); --darkreader-inline-border-top: var(--darkreader-border-373a3fd9, rgba(121, 112, 99, 0.85)); --darkreader-inline-border-right: var(--darkreader-border-373a3fd9, rgba(121, 112, 99, 0.85)); --darkreader-inline-border-bottom: var(--darkreader-border-373a3fd9, rgba(121, 112, 99, 0.85)); --darkreader-inline-border-left: var(--darkreader-border-373a3fd9, rgba(121, 112, 99, 0.85));" data-darkreader-inline-border-top="" data-darkreader-inline-border-right="" data-darkreader-inline-border-bottom="" data-darkreader-inline-border-left=""><div style="position: relative;"><div><div class="scene-container" style="position: relative; width: 1517px; height: 672px;"><canvas data-engine="three.js r152" width="1365" height="604" style="display: block; touch-action: none; width: 1517px; height: 672px;" class="clickable"></canvas><div class="scene-nav-info">Left-click: rotate, Mouse-wheel/middle-click: zoom, Right-click: pan</div></div></div><div class="graph-info-msg"></div></div></div>
         </section>
 
         <section class="content-section" id="legend-section">
             <h3>Legend</h3>
             <p>Node colors and shapes represent different categories in Machine Learning:</p>
              <ul class="legend">
-                <li><span class="legend-color-indicator" style="background-color: rgb(160, 210, 219); --darkreader-inline-bgcolor: var(--darkreader-background-a0d2db, #24555e);" data-darkreader-inline-bgcolor=""></span><span class="legend-text">Foundations</span></li>
-                <li><span class="legend-color-indicator" style="background-color: rgb(247, 200, 224); --darkreader-inline-bgcolor: var(--darkreader-background-f7c8e0, #4e0b2d);" data-darkreader-inline-bgcolor=""></span><span class="legend-text">Mathematics</span></li>
-                <li><span class="legend-color-indicator" style="background-color: rgb(190, 225, 230); --darkreader-inline-bgcolor: var(--darkreader-background-bee1e6, #1d464c);" data-darkreader-inline-bgcolor=""></span><span class="legend-text">Data Science Core</span></li>
-                <li><span class="legend-color-indicator" style="background-color: rgb(169, 223, 191); --darkreader-inline-bgcolor: var(--darkreader-background-a9dfbf, #215940);" data-darkreader-inline-bgcolor=""></span><span class="legend-text">Core ML Models</span></li>
-                <li><span class="legend-color-indicator" style="background-color: rgb(212, 160, 249); --darkreader-inline-bgcolor: var(--darkreader-background-d4a0f9, #35393b);" data-darkreader-inline-bgcolor=""></span><span class="legend-text">Deep Learning</span></li>
-                <li><span class="legend-color-indicator" style="background-color: rgb(255, 179, 71); --darkreader-inline-bgcolor: var(--darkreader-background-ffb347, #a15f00);" data-darkreader-inline-bgcolor=""></span><span class="legend-text">NLP</span></li>
-                <li><span class="legend-color-indicator" style="background-color: rgb(135, 206, 235); --darkreader-inline-bgcolor: var(--darkreader-background-87ceeb, #135874);" data-darkreader-inline-bgcolor=""></span><span class="legend-text">Computer Vision</span></li>
-                <li><span class="legend-color-indicator" style="background-color: rgb(255, 218, 185); --darkreader-inline-bgcolor: var(--darkreader-background-ffdab9, #5d2c00);" data-darkreader-inline-bgcolor=""></span><span class="legend-text">Reinforcement Learning</span></li>
-                <li><span class="legend-color-indicator" style="background-color: rgb(254, 200, 154); --darkreader-inline-bgcolor: var(--darkreader-background-fec89a, #6f3401);" data-darkreader-inline-bgcolor=""></span><span class="legend-text">MLOps</span></li>
-                <li><span class="legend-color-indicator" style="background-color: rgb(178, 186, 187); --darkreader-inline-bgcolor: var(--darkreader-background-b2babb, #414649);" data-darkreader-inline-bgcolor=""></span><span class="legend-text">Tools &amp; Libraries</span></li>
-                <li><span class="legend-color-indicator" style="background-color: rgb(224, 187, 228); --darkreader-inline-bgcolor: var(--darkreader-background-e0bbe4, #491f4d);" data-darkreader-inline-bgcolor=""></span><span class="legend-text">Courses/Certs</span></li>
-                <li><span class="legend-color-indicator" style="background-color: rgb(199, 206, 234); --darkreader-inline-bgcolor: var(--darkreader-background-c7ceea, #2e3233);" data-darkreader-inline-bgcolor=""></span><span class="legend-text">General Concepts</span></li>
+                <li><span class="legend-color-indicator" style="background-color: rgb(160, 210, 219);"></span><span class="legend-text">Foundations</span></li>
+                <li><span class="legend-color-indicator" style="background-color: rgb(247, 200, 224);"></span><span class="legend-text">Mathematics</span></li>
+                <li><span class="legend-color-indicator" style="background-color: rgb(190, 225, 230);"></span><span class="legend-text">Data Science Core</span></li>
+                <li><span class="legend-color-indicator" style="background-color: rgb(169, 223, 191);"></span><span class="legend-text">Core ML Models</span></li>
+                <li><span class="legend-color-indicator" style="background-color: rgb(212, 160, 249);"></span><span class="legend-text">Deep Learning</span></li>
+                <li><span class="legend-color-indicator" style="background-color: rgb(255, 179, 71);"></span><span class="legend-text">NLP</span></li>
+                <li><span class="legend-color-indicator" style="background-color: rgb(135, 206, 235);"></span><span class="legend-text">Computer Vision</span></li>
+                <li><span class="legend-color-indicator" style="background-color: rgb(255, 218, 185);"></span><span class="legend-text">Reinforcement Learning</span></li>
+                <li><span class="legend-color-indicator" style="background-color: rgb(254, 200, 154);"></span><span class="legend-text">MLOps</span></li>
+                <li><span class="legend-color-indicator" style="background-color: rgb(178, 186, 187);"></span><span class="legend-text">Tools & Libraries</span></li>
+                <li><span class="legend-color-indicator" style="background-color: rgb(224, 187, 228);"></span><span class="legend-text">Courses/Certs</span></li>
+                <li><span class="legend-color-indicator" style="background-color: rgb(199, 206, 234);"></span><span class="legend-text">General Concepts</span></li>
             </ul>
         </section>
 
@@ -180,9 +197,9 @@
                     <div class="accordion-header"><strong>Phase 1: Foundational Knowledge (3-9 months)</strong><i class="fas fa-plus accordion-icon"></i></div>
                     <div class="accordion-content">
                         <ul>
-                            <li><strong>Mathematics:</strong> Linear Algebra (Vectors, Matrices, Eigenvalues/vectors), Calculus (Derivatives, Gradients, Integrals), Probability &amp; Statistics (Distributions, Hypothesis Testing, Bayes' Theorem, Regression basics).</li>
+                            <li><strong>Mathematics:</strong> Linear Algebra (Vectors, Matrices, Eigenvalues/vectors), Calculus (Derivatives, Gradients, Integrals), Probability & Statistics (Distributions, Hypothesis Testing, Bayes' Theorem, Regression basics).</li>
                             <li><strong>Programming:</strong> Python (Core syntax, data structures, functions, classes, OOP basics), NumPy (Numerical computation), Pandas (Data manipulation).</li>
-                            <li><strong>Computer Science Basics:</strong> Data Structures &amp; Algorithms, Version Control (Git/GitHub).</li>
+                            <li><strong>Computer Science Basics:</strong> Data Structures & Algorithms, Version Control (Git/GitHub).</li>
                             <li><strong>Intro to Data Visualization:</strong> Matplotlib, Seaborn for basic plotting.</li>
                         </ul>
                     </div>
@@ -192,7 +209,7 @@
                     <div class="accordion-content">
                         <ul>
                             <li><strong>Machine Learning Concepts:</strong> Supervised Learning (Regression, Classification), Unsupervised Learning (Clustering, Dimensionality Reduction), Model Evaluation Metrics (Accuracy, Precision, Recall, F1, ROC/AUC, MSE, MAE), Bias-Variance Tradeoff, Overfitting/Underfitting, Cross-Validation.</li>
-                            <li><strong>Data Preprocessing &amp; Feature Engineering:</strong> Handling Missing Data, Outlier Detection, Data Scaling &amp; Normalization, Categorical Encoding, Feature Selection &amp; Extraction (PCA, t-SNE), Exploratory Data Analysis (EDA).</li>
+                            <li><strong>Data Preprocessing & Feature Engineering:</strong> Handling Missing Data, Outlier Detection, Data Scaling & Normalization, Categorical Encoding, Feature Selection & Extraction (PCA, t-SNE), Exploratory Data Analysis (EDA).</li>
                             <li><strong>Traditional ML Algorithms:</strong> Linear/Logistic Regression, Decision Trees, Random Forests, Gradient Boosting Machines (XGBoost, LightGBM), Support Vector Machines (SVM), K-Means Clustering, K-Nearest Neighbors (KNN).</li>
                             <li><strong>Key Libraries:</strong> Scikit-learn.</li>
                             <li><strong>Practical Projects:</strong> Start working on small datasets (e.g., from Kaggle, UCI ML Repository).</li>
@@ -200,7 +217,7 @@
                     </div>
                 </div>
                 <div class="accordion-item">
-                    <div class="accordion-header"><strong>Phase 3: Deep Learning &amp; Specialization (9-18+ months)</strong><i class="fas fa-plus accordion-icon"></i></div>
+                    <div class="accordion-header"><strong>Phase 3: Deep Learning & Specialization (9-18+ months)</strong><i class="fas fa-plus accordion-icon"></i></div>
                     <div class="accordion-content">
                         <ul>
                             <li><strong>Deep Learning Fundamentals:</strong> Neural Networks Basics (Neurons, Layers, Activation Functions, Backpropagation), Convolutional Neural Networks (CNNs), Recurrent Neural Networks (RNNs, LSTMs, GRUs), Optimizers, Loss Functions, Regularization (Dropout), Transfer Learning.</li>
@@ -211,14 +228,14 @@
                     </div>
                 </div>
                  <div class="accordion-item">
-                    <div class="accordion-header"><strong>Phase 4: Advanced Practice &amp; Research (Ongoing)</strong><i class="fas fa-plus accordion-icon"></i></div>
+                    <div class="accordion-header"><strong>Phase 4: Advanced Practice & Research (Ongoing)</strong><i class="fas fa-plus accordion-icon"></i></div>
                     <div class="accordion-content">
                         <ul>
                             <li><strong>Advanced Topics:</strong> Generative AI, Explainable AI (XAI), Federated Learning, Quantum ML, Graph Neural Networks.</li>
-                            <li><strong>Research &amp; Innovation:</strong> Reading and implementing research papers, contributing to open source.</li>
-                            <li><strong>Large-Scale Projects &amp; Domain Expertise.</strong></li>
+                            <li><strong>Research & Innovation:</strong> Reading and implementing research papers, contributing to open source.</li>
+                            <li><strong>Large-Scale Projects & Domain Expertise.</strong></li>
                             <li><strong>Ethics in AI:</strong> Understanding bias, fairness, and societal impact.</li>
-                            <li><span class="soft-skill-text"><strong>Mentorship &amp; Leadership.</strong></span></li>
+                            <li><span class="soft-skill-text"><strong>Mentorship & Leadership.</strong></span></li>
                         </ul>
                     </div>
                 </div>
@@ -226,7 +243,7 @@
         </section>
 
         <section class="content-section" id="certifications-courses">
-            <h3>Notable Courses &amp; Certifications</h3>
+            <h3>Notable Courses & Certifications</h3>
             <p>Focus on hands-on projects and understanding; courses supplement this.</p>
             <ul>
                 <li><strong>Foundational:</strong> Andrew Ng's Machine Learning Specialization (Coursera), DeepLearning.AI TensorFlow Developer Professional Certificate, Mathematics for Machine Learning Specialization (Coursera), Fast.ai Courses.</li>
@@ -238,11 +255,11 @@
         <section class="content-section" id="soft-skills">
             <h3>Crucial Soft Skills for ML</h3>
             <ul>
-                <li><span class="soft-skill-text"><strong>Problem Solving &amp; Analytical Thinking</strong></span></li>
-                <li><span class="soft-skill-text"><strong>Statistical Intuition &amp; Data Sense</strong></span></li>
-                <li><span class="soft-skill-text"><strong>Communication (Written &amp; Verbal)</strong></span></li>
-                <li><span class="soft-skill-text"><strong>Continuous Learning &amp; Curiosity</strong></span></li>
-                <li><span class="soft-skill-text"><strong>Attention to Detail &amp; Rigor</strong></span></li>
+                <li><span class="soft-skill-text"><strong>Problem Solving & Analytical Thinking</strong></span></li>
+                <li><span class="soft-skill-text"><strong>Statistical Intuition & Data Sense</strong></span></li>
+                <li><span class="soft-skill-text"><strong>Communication (Written & Verbal)</strong></span></li>
+                <li><span class="soft-skill-text"><strong>Continuous Learning & Curiosity</strong></span></li>
+                <li><span class="soft-skill-text"><strong>Attention to Detail & Rigor</strong></span></li>
                 <li><span class="soft-skill-text"><strong>Experimentation Mindset</strong></span></li>
                 <li><span class="soft-skill-text"><strong>Business Acumen</strong></span></li>
                 <li><span class="soft-skill-text"><strong>Ethical Awareness</strong></span></li>
@@ -252,15 +269,16 @@
         <section class="content-section" id="learning-resources">
             <h3>Recommended Learning Resources</h3>
             <ul>
-                <li><span class="resource-text"><strong>Platforms &amp; Competitions:</strong> Kaggle, Zindi.</span></li>
+                <li><span class="resource-text"><strong>Platforms & Competitions:</strong> Kaggle, Zindi.</span></li>
                 <li><span class="resource-text"><strong>Online Courses:</strong> Coursera, edX, Udacity, DataCamp, Fast.ai, DeepLearning.AI.</span></li>
                 <li><span class="resource-text"><strong>Books:</strong> "Hands-On Machine Learning" (Géron), "Pattern Recognition and Machine Learning" (Bishop), "Deep Learning" (Goodfellow et al.).</span></li>
                 <li><span class="resource-text"><strong>Documentation:</strong> Scikit-learn, TensorFlow, PyTorch, Pandas, NumPy.</span></li>
                 <li><span class="resource-text"><strong>Research Papers:</strong> ArXiv (cs.LG, cs.AI, stat.ML), PapersWithCode.</span></li>
-                <li><span class="resource-text"><strong>Blogs &amp; Communities:</strong> Towards Data Science, KDnuggets, Distill.pub, Reddit (r/MachineLearning, r/datascience).</span></li>
+                <li><span class="resource-text"><strong>Blogs & Communities:</strong> Towards Data Science, KDnuggets, Distill.pub, Reddit (r/MachineLearning, r/datascience).</span></li>
             </ul>
         </section>
-
+        
+        <div id="graph-tooltip"></div> <!-- Custom Tooltip Element -->
     </div>
 
     <script>
@@ -279,9 +297,19 @@
                 localStorage.setItem('theme', 'light');
             }
             const graphContainer = document.getElementById('visNetwork');
+            const customTooltip = document.getElementById('graph-tooltip');
+
             if (graphContainer) {
                 graphContainer.style.border = `1px solid ${getCssVar('--border-glass-current')}`;
             }
+            if (customTooltip) { // Update tooltip border if it exists
+                customTooltip.style.background = getCssVar('--bg-glass-current');
+                customTooltip.style.color = getCssVar('--text-primary-current');
+                customTooltip.style.boxShadow = getCssVar('--shadow-current');
+                customTooltip.style.border = `1px solid ${getCssVar('--border-glass-current')}`;
+                // For #graph-tooltip strong color, it's handled by CSS vars directly.
+            }
+
             if(Graph) { 
                 Graph.backgroundColor(darkModeToggle.checked ? getCssVar('--bg-dark') : getCssVar('--bg-light'));
                 Graph.scene().children.find(c => c instanceof THREE.AmbientLight)?.color.setHex(darkModeToggle.checked ? 0x666666 : 0xaaaaaa);
@@ -319,9 +347,48 @@
         let currentSelectedNodeData = null;
         let highlightedNodesSet = new Set();
         let highlightedLinksSet = new Set();
-        let rawData; // Will hold the initial graph data for reference
+        let rawData; 
+
+        const feynmanExplanations = {
+            'Foundations': "Imagine building a giant LEGO castle! Before you build the cool towers (that's Machine Learning), you need a strong base and know how to connect the LEGO bricks. 'Foundations' are these essential starting pieces: knowing some 'Mathematics' (like counting and shapes), 'Programming' (how to give instructions), and basic 'Computer Science' (how computers organize things).",
+            'Mathematics': "Think of math as a giant toolbox for solving puzzles. For Machine Learning, important tools are:<br><b>Linear Algebra</b>: Playing with lists of numbers and arrows (great for organizing data).<br><b>Calculus</b>: Understanding how things change (like a model getting better at predictions).<br><b>Probability & Stats</b>: Making smart guesses and finding patterns in data (like figuring out if a coin is fair).",
+            'Programming': "This is like learning a special language to give instructions to a computer. For Machine Learning, 'Python' is a very popular choice because it's like a friendly helper that's easy to learn and has lots of pre-built tools.",
+            'CS Basics': "Think of this as learning the 'ABCs' of how computers work and organize information. This includes 'Data Structures' (like different ways to store your LEGOs) and 'Algorithms' (step-by-step recipes to solve problems). 'Git/GitHub' is like a magic 'undo' button and a way to share your LEGO creations with others.",
+            'Linear Algebra': "Imagine you have grids of numbers (matrices) or arrows (vectors). Linear Algebra is like a set of rules for squishing, stretching, or combining these grids and arrows. It's super important for how computers handle and 'see' data in ML.",
+            'Calculus': "Calculus is all about change! If something is moving, growing, or getting better (like an ML model learning), calculus helps us measure *how fast* it's changing (derivatives) or how much it has changed overall (integrals). It’s like a super-magnifying glass for change.",
+            'Probability & Stats': "Probability is like guessing games: what are the chances it rains? Statistics helps us collect clues (data), organize them, and use them to make smart guesses or find hidden stories in the numbers. It's key to knowing if our ML models are actually learning well.",
+            'Python': "Python is a popular language for talking to computers. It's like English, but for machines! It's loved because it's easy to read, write, and has tons of ready-made tools (libraries) for building cool things, especially in Machine Learning.",
+            'NumPy': "Imagine you have LOTS of numbers you need to work with, like a giant spreadsheet. NumPy is a special Python tool that's super fast at doing math with big lists or grids of numbers. It's like a power-drill for number crunching.",
+            'Pandas': "Pandas is another Python tool, perfect for working with data tables (like Excel spreadsheets, but in code!). It helps you clean up messy data, organize it, and ask questions like 'What's the average age?'. It's like a super-organizer for your data.",
+            'Git/GitHub': "Git is like a time machine for your code. If you make a mistake, you can go back! GitHub is like a website where you can store your code projects online, share them with others, and work together on big projects. It's essential for teamwork.",
+            'Matplotlib/Seaborn': "These are Python tools for drawing pictures with your data! Instead of just looking at numbers, you can create charts and graphs to see patterns, trends, or how things are related. It's like making your data tell a visual story.",
+            'Scikit-learn': "This is a treasure chest of ready-to-use Machine Learning tools in Python. Need to predict something? Classify items? Find groups? Scikit-learn has algorithms for all that, making it much easier to build ML models without starting from scratch.",
+            'Data Science Core': "This is the heart of working with data. It's about asking good questions, finding data (Data Collection), exploring it to see what's interesting (EDA), cleaning it up (Data Preprocessing), and cleverly preparing it for ML models (Feature Engineering).",
+            'EDA': "Exploratory Data Analysis (EDA) is like being a detective with your data. You look for clues, ask questions, make charts, and try to understand the story your data is trying to tell you *before* you build any fancy models.",
+            'Data Preprocessing': "Imagine your data is like a messy room. Preprocessing is cleaning it up! This means filling in missing pieces, fixing errors, and getting everything organized so your Machine Learning models can work with it properly.",
+            'Feature Engineering': "This is like being a clever inventor for your data. You take the raw data you have and create new, smarter 'features' (or signals) that help your Machine Learning models learn better and make more accurate predictions. It's a bit of an art!",
+            'Core ML Concepts': "These are the big ideas behind Machine Learning. It's about understanding how computers can learn from examples (Supervised/Unsupervised Learning) and how we can check if they're actually learning the right things (Model Evaluation).",
+            'Supervised Learning': "Imagine teaching a child by showing examples with labels. 'This is a cat,' 'This is a dog.' Supervised Learning is similar: you give the computer data with answers, and it learns to predict answers for new, unseen data. It's used for tasks like predicting house prices or identifying spam emails.",
+            'Unsupervised Learning': "What if you have data without any labels or answers? Unsupervised Learning is like asking the computer to find interesting patterns or groups in the data all by itself. Think of it like sorting a mixed bag of LEGOs into piles of similar bricks without being told what the piles should be.",
+            'Model Evaluation': "After you build an ML model (your 'student'), how do you know if it's any good? Model Evaluation is like giving your student a test! You use different scores (metrics) to see how well it performs and if it's truly learned or just memorized.",
+            'Deep Learning': "Think of this as a special type of Machine Learning that's inspired by how our brains work, using 'neural networks' (like many tiny, connected brain cells). It's super powerful for complex tasks like understanding images, speech, or text, especially when you have LOTS of data.",
+            'Neural Networks': "These are the 'brains' of Deep Learning. Imagine many simple calculators (neurons) connected in layers. Each one does a small calculation, and by working together, they can learn very complex patterns from data, like recognizing a face in a photo.",
+            'CNNs': "Convolutional Neural Networks (CNNs) are a type of neural network that's a superstar at understanding images. They work by scanning pictures bit by bit, looking for simple patterns (like edges or corners) and then combining these to recognize more complex things (like eyes, then faces, then a whole cat!).",
+            'RNNs/LSTMs': "Recurrent Neural Networks (RNNs) are special because they have 'memory'. This makes them great for things that happen in order, like words in a sentence or notes in a song. LSTMs are an advanced type of RNN that are even better at remembering things for a long time.",
+            'Transformers': "Transformers are a newer, super-powerful type of model, especially famous in understanding language (like GPT, which powers ChatGPT). They are very good at paying 'attention' to the most important parts of the input, like which words in a sentence are most relevant to each other.",
+            'NLP': "Natural Language Processing (NLP) is about teaching computers to understand and use human language – reading, writing, speaking. Think of Siri, Google Translate, or chatbots. It's like giving computers the ability to have a conversation.",
+            'Computer Vision': "This is like giving eyes to computers! Computer Vision teaches machines to 'see' and interpret images and videos – recognizing objects, faces, scenes, or even understanding what's happening in a video. Self-driving cars use this a lot!",
+            'Reinforcement Learning': "Imagine training a dog with treats. Reinforcement Learning is similar: you teach an 'agent' (like a robot or a game character) by giving it 'rewards' for good actions and 'penalties' for bad ones. It learns by trial and error to achieve a goal, like winning a game.",
+            'MLOps': "Machine Learning Operations (MLOps) is like being the expert mechanic and manager for your ML models. It's about all the steps to take a model from an idea to being used in the real world reliably – deploying it, keeping an eye on it, and updating it when needed. It's about making ML professional and scalable."
+        };
+
+        let customTooltipElement; // Will hold the #graph-tooltip div
+        let graphContainerForMouseEvents; // Will hold the #visNetwork div
 
         document.addEventListener('DOMContentLoaded', () => {
+            customTooltipElement = document.getElementById('graph-tooltip');
+            graphContainerForMouseEvents = document.getElementById('visNetwork');
+
             applyTheme(); 
             darkModeToggle.addEventListener('change', applyTheme);
 
@@ -331,9 +398,9 @@
                 header.addEventListener('click', () => {
                     const isActive = accordion.classList.contains('active');
                     accordions.forEach(acc => {
-                         if (acc !== accordion) {
+                         if (acc !== accordion) { 
                             acc.classList.remove('active');
-                            acc.querySelector('.accordion-content').style.maxHeight = 0;
+                            acc.querySelector('.accordion-content').style.maxHeight = "0px"; 
                          }
                     });
                     if (!isActive) {
@@ -343,14 +410,40 @@
                     } else {
                         accordion.classList.remove('active');
                         const content = accordion.querySelector('.accordion-content');
-                        content.style.maxHeight = 0;
+                        content.style.maxHeight = "0px";
                     }
                 });
             });
 
+            if (graphContainerForMouseEvents) {
+                graphContainerForMouseEvents.addEventListener('mousemove', event => {
+                    if (customTooltipElement && customTooltipElement.style.display === 'block') {
+                        let x = event.clientX + 15; // Relative to viewport
+                        let y = event.clientY + 15; // Relative to viewport
+
+                        const tooltipRect = customTooltipElement.getBoundingClientRect();
+                        const viewportWidth = window.innerWidth;
+                        const viewportHeight = window.innerHeight;
+
+                        if (x + tooltipRect.width > viewportWidth) {
+                            x = event.clientX - tooltipRect.width - 15;
+                        }
+                        if (y + tooltipRect.height > viewportHeight) {
+                            y = event.clientY - tooltipRect.height - 15;
+                        }
+                        if (x < 0) x = 5; // Add small padding from edge
+                        if (y < 0) y = 5; // Add small padding from edge
+                        
+                        customTooltipElement.style.left = `${x}px`;
+                        customTooltipElement.style.top = `${y}px`;
+                    }
+                });
+            }
+
+
             function attemptInitGraph(retries = 5, delay = 300) {
-                const graphContainer = document.getElementById('visNetwork');
-                const loadingMessageElement = graphContainer.querySelector('.loading-message');
+                const graphContainer = document.getElementById('visNetwork'); // Already used this name
+                const loadingMessageElement = graphContainer.querySelector('.loading-message'); // Assuming it exists
                 if (typeof THREE !== 'undefined' && typeof ForceGraph3D !== 'undefined') {
                     if (loadingMessageElement) loadingMessageElement.textContent = "Libraries loaded. Initializing 3D Graph...";
                     initNewGraph();
@@ -368,7 +461,7 @@
 
 
         function initNewGraph() {
-            const graphContainer = document.getElementById('visNetwork');
+            const graphContainer = document.getElementById('visNetwork'); // For ForceGraph3D init
             const loadingMessageElement = graphContainer.querySelector('.loading-message');
             if (loadingMessageElement) loadingMessageElement.style.display = 'none';
 
@@ -388,7 +481,6 @@
                 Specialization: '#f7a1a0' 
             };
 
-            // Store the initial data in the global rawData variable
             rawData = { 
                 nodes: [
                     { id: 'Foundations', name: 'Foundations', group: 'Foundations', color: nodeColors.Foundations, shape: 'capsule', size: 12 },
@@ -504,6 +596,19 @@
                 (graphContainer)
                 .graphData(JSON.parse(JSON.stringify(rawData))) 
                 .nodeId('id')
+                .nodeLabel(() => null) // Disable default tooltip of 3d-force-graph
+                .onNodeHover((node, prevNode) => {
+                    if (customTooltipElement) {
+                        if (node) {
+                            const explanation = feynmanExplanations[node.id] || feynmanExplanations[node.name] || "No explanation available for this topic yet.";
+                            customTooltipElement.innerHTML = `<strong>${node.name || node.id}</strong><hr style="border-color: var(--border-glass-current); margin: 5px 0;">${explanation}`;
+                            customTooltipElement.style.display = 'block';
+                             // Position will be updated by mousemove listener
+                        } else {
+                            customTooltipElement.style.display = 'none';
+                        }
+                    }
+                })
                 .nodeThreeObject(node => {
                     const obj = createNodeShape(node);
                     const label = createTextLabel(node.name || node.id, node.color);
@@ -542,7 +647,7 @@
                     if (link.__threeObj) link.__threeObj.visible = true;
                     return material;
                 })
-                .linkColor(link => { // This acts as a fallback or can be primary if material isn't used for color
+                .linkColor(link => { 
                     if (highlightedLinksSet.has(link.id)) {
                         return darkModeToggle.checked ? '#ffa500' : '#ff8c00';
                     }
@@ -675,6 +780,5 @@
             }
         }
     </script>
-
 
 </body></html>

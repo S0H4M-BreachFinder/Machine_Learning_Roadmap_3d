@@ -73,7 +73,11 @@
         .accordion-content ul { list-style-position: inside; padding-left: 5px; }
         .accordion-content ul li { margin-bottom: 8px; }
         .loading-message { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.2em; color: var(--text-secondary-current); text-align: center; padding: 20px; }
-        
+        .accordion-item.active .accordion-content {
+            max-height: 30000px;
+            padding: 5px;
+            margin-bottom: 0px; /* Fixed margin syntax */
+        }
         /* Custom Graph Tooltip Styles */
         #graph-tooltip {
             display: none;

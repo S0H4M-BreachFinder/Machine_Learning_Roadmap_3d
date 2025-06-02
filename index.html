@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <!-- saved from url=(0065)https://s0h4m-breachfinder.github.io/Machine_Learning_Roadmap_3d/ -->
-<html lang="en" data-darkreader-proxy-injected="true"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<html lang="en" data-darkreader-proxy-injected="true" class="dark-mode"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Machine Learning Career Roadmap - Interactive 3D Graph</title>
-    <link href="./Machine Learning Career Roadmap - Interactive 3D Graph1_files/css2" rel="stylesheet">
-    <script src="./Machine Learning Career Roadmap - Interactive 3D Graph1_files/three.min.js.download" defer=""></script>
-    <script src="./Machine Learning Career Roadmap - Interactive 3D Graph1_files/3d-force-graph.min.js.download" defer=""></script>
-    <link href="./Machine Learning Career Roadmap - Interactive 3D Graph1_files/all.min.css" rel="stylesheet">
+    <link href="./Machine Learning Career Roadmap - Interactive 3D Graph_files/css2" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/3d-force-graph@1.77.0/dist/3d-force-graph.min.js" defer></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 
     <style>
         :root {
@@ -15,77 +16,71 @@
             --transition-speed: 0.3s ease-in-out;
             --border-radius-main: 16px;
             --border-radius-small: 8px;
-
-            --bg-dark: #1a1d21; /* Slightly deeper dark */
-            --bg-glass-dark: rgba(35, 38, 43, 0.85); /* More opaque glass */
-            --border-glass-dark: rgba(60, 63, 68, 0.85);
-            --text-primary-dark: #e0e0e0; /* Slightly softer white */
-            --text-secondary-dark: #9e9e9e; /* Softer grey */
-            --accent-primary-dark: #42a5f5; /* Softer blue */
-            --accent-secondary-dark: #66bb6a; /* Softer green */
-            --shadow-dark: 0 10px 35px 0 rgba(0, 0, 0, 0.4);
-
-            --bg-current: var(--bg-dark);
-            --bg-glass-current: var(--bg-glass-dark);
-            --border-glass-current: var(--border-glass-dark);
-            --text-primary-current: var(--text-primary-dark);
-            --text-secondary-current: var(--text-secondary-dark);
-            --accent-primary-current: var(--accent-primary-dark);
-            --accent-secondary-current: var(--accent-secondary-dark);
-            --shadow-current: var(--shadow-dark);
+            --bg-light: #e9eef2; --bg-glass-light: rgba(255, 255, 255, 0.7); --border-glass-light: rgba(220, 220, 220, 0.85);
+            --text-primary-light: #2c3e50; --text-secondary-light: #566573;
+            --accent-primary-light: #2980b9; --accent-secondary-light: #27ae60; --shadow-light: 0 6px 24px 0 rgba(0, 0, 0, 0.08);
+            --bg-dark: #1f2227; --bg-glass-dark: rgba(40, 43, 48, 0.7); --border-glass-dark: rgba(55, 58, 63, 0.85);
+            --text-primary-dark: #ecf0f1; --text-secondary-dark: #aab8c2;
+            --accent-primary-dark: #3498db; --accent-secondary-dark: #2ecc71; --shadow-dark: 0 8px 32px 0 rgba(0, 0, 0, 0.25);
         }
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        html { background-color: var(--bg-current); color: var(--text-primary-current); }
+        html { background-color: var(--bg-current); color: var(--text-primary-current); transition: background-color var(--transition-speed), color var(--transition-speed); }
         body { font-family: var(--font-primary); line-height: 1.6; overflow-x: hidden; min-height: 100vh; color: inherit; background-color: inherit; }
-
-        .page-wrapper { max-width: 1600px; margin: 0 auto; padding: 20px; position: relative; }
+        html.dark-mode {
+            --bg-current: var(--bg-dark); --bg-glass-current: var(--bg-glass-dark); --border-glass-current: var(--border-glass-dark);
+            --text-primary-current: var(--text-primary-dark); --text-secondary-current: var(--text-secondary-dark);
+            --accent-primary-current: var(--accent-primary-dark); --accent-secondary-current: var(--accent-secondary-dark);
+            --shadow-current: var(--shadow-dark);
+        }
+        html:not(.dark-mode) {
+            --bg-current: var(--bg-light); --bg-glass-current: var(--bg-glass-light); --border-glass-current: var(--border-glass-light);
+            --text-primary-current: var(--text-primary-light); --text-secondary-current: var(--text-secondary-light);
+            --accent-primary-current: var(--accent-primary-light); --accent-secondary-current: var(--accent-secondary-light);
+            --shadow-current: var(--shadow-light);
+        }
+        .page-wrapper { max-width: 1600px; margin: 0 auto; padding: 20px; }
         .page-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; padding: 15px 0; margin-bottom: 20px; gap: 20px; }
         .page-title { font-size: 2.2em; font-weight: 700; color: var(--accent-primary-current); letter-spacing: -0.5px; margin-right: auto; }
         .header-controls { display: flex; align-items: center; gap: 20px; }
-
+        .dark-mode-toggle { display: flex; align-items: center; cursor: pointer; }
+        .dark-mode-toggle input[type="checkbox"] { display: none; }
+        .toggle-slider { width: 50px; height: 26px; background-color: #bdc3c7; border-radius: 26px; position: relative; transition: background-color var(--transition-speed); }
+        .toggle-slider::before { content: ''; position: absolute; width: 22px; height: 22px; border-radius: 50%; background-color: white; top: 2px; left: 2px; transition: transform var(--transition-speed); box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .dark-mode-toggle input:checked + .toggle-slider { background-color: var(--accent-primary-current); }
+        .dark-mode-toggle input:checked + .toggle-slider::before { transform: translateX(24px); }
+        .toggle-icon { margin-left: 10px; font-size: 1.2em; color: var(--text-secondary-current); }
+        html.dark-mode .toggle-icon { color: var(--accent-primary-current); }
 
         .content-section { background: var(--bg-glass-current); border: 1px solid var(--border-glass-current); border-radius: var(--border-radius-main); padding: 25px; margin-bottom: 30px; box-shadow: var(--shadow-current); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
         .content-section h3 { font-size: 1.5em; font-weight: 600; color: var(--accent-primary-current); margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid var(--accent-primary-current); }
         .content-section p, .content-section li { color: var(--text-secondary-current); font-size: 0.95em; margin-bottom: 10px; }
         .content-section strong { color: var(--text-primary-current); font-weight: 600; }
-        #visNetwork { height: 85vh; /* Slightly taller for DAG view */ width: 100%; border-radius: var(--border-radius-small); cursor: default; border: 1px solid var(--border-glass-current); position: relative; overflow: hidden; }
-        
-        ul.legend { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 8px; }
-        ul.legend li { color: var(--text-secondary-current); padding: 5px 0; font-size: 0.85em; }
+        #visNetwork { height: 80vh; width: 100%; border-radius: var(--border-radius-small); cursor: default; border: 1px solid var(--border-glass-current); position: relative; overflow: hidden; }
+        .legend ul { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 8px; }
+        .legend li { color: var(--text-secondary-current); padding: 5px 0; font-size: 0.85em; }
         .legend-color-indicator { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; vertical-align: middle; border: 1px solid rgba(120,120,120,0.3); }
         .legend-text { vertical-align: middle; }
-
         .accordion-item { margin-bottom: 15px; border-radius: var(--border-radius-small); overflow: hidden; border: 1px solid var(--border-glass-current); }
-        .accordion-header { background-color: rgba(255,255,255,0.03); padding: 15px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-        .accordion-header:hover { background-color: rgba(255,255,255,0.06); }
+        .accordion-header { background-color: rgba(0,0,0,0.02); padding: 15px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        html.dark-mode .accordion-header { background-color: rgba(255,255,255,0.03); }
+        .accordion-header:hover { background-color: rgba(0,0,0,0.04); }
+        html.dark-mode .accordion-header:hover { background-color: rgba(255,255,255,0.06); }
         .accordion-header strong { font-size: 1.1em; color: var(--text-primary-current); }
         .accordion-icon { font-size: 1em; color: var(--accent-primary-current); transition: transform var(--transition-speed); }
         .accordion-item.active .accordion-icon { transform: rotate(45deg); }
-        .accordion-content { max-height: 0; overflow: hidden; padding: 0 20px; background-color: transparent; transition: max-height 0.5s ease-out, padding var(--transition-speed); }
-        .accordion-item.active .accordion-content { max-height: 5000px; padding: 20px; }
+        .accordion-content { max-height: 100 px; overflow: false; padding: 0 20px; background-color: transparent; transition: max-height 0.5s ease-out, padding var(--transition-speed); }
+        .accordion-item.active .accordion-content { max-height: 1500px; padding: 20px; }
         .accordion-content ul { list-style-position: inside; padding-left: 5px; }
         .accordion-content ul li { margin-bottom: 8px; }
         .loading-message { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.2em; color: var(--text-secondary-current); text-align: center; padding: 20px; }
-        
-        .node-tooltip-style {
-            position: fixed; display: none; padding: 10px 15px;
-            background-color: var(--bg-glass-current); border: 1px solid var(--border-glass-current);
-            border-radius: var(--border-radius-small); box-shadow: var(--shadow-current);
-            color: var(--text-primary-current); font-size: 0.85em; max-width: 280px;
-            z-index: 10000; pointer-events: none; backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px); transition: opacity 0.1s ease-out; line-height: 1.4;
-        }
-        .node-tooltip-style strong { color: var(--accent-primary-current); display: block; margin-bottom: 5px; }
-
         @media (max-width: 768px) {
             .page-title { font-size: 1.8em; margin-bottom: 10px; width:100%; text-align:center; }
             .header-controls { width: 100%; justify-content: center; }
-            .content-section { padding: 20px; } ul.legend { grid-template-columns: 1fr; } #visNetwork { height: 70vh; }
+            .content-section { padding: 20px; } .legend ul { grid-template-columns: 1fr; } #visNetwork { height: 65vh; }
             .accordion-header strong { font-size: 1em; }
         }
          @media (max-width: 480px) {
-            #visNetwork { height: 65vh; }
-            .node-tooltip-style { max-width: 200px; font-size: 0.8em; }
+            #visNetwork { height: 60vh; }
         }
     </style>
 <style type="text/css">.graph-info-msg {
@@ -145,28 +140,35 @@
     <div class="page-wrapper">
         <header class="page-header">
             <h1 class="page-title">Machine Learning Roadmap (3D Interactive)</h1>
+            <div class="header-controls">
+                <label class="dark-mode-toggle" for="darkModeToggle" aria-label="Toggle dark mode">
+                    <input type="checkbox" id="darkModeToggle">
+                    <span class="toggle-slider"></span>
+                    <i class="fas toggle-icon fa-sun" id="modeIcon"></i>
+                </label>
+            </div>
         </header>
 
         <section class="content-section" id="roadmap-visualization">
-            <h3>Career Visualization (3D) - Click nodes to explore! Hover for info.</h3>
-            <div id="visNetwork" style="border: 1px solid rgba(60, 63, 68, 0.85); --darkreader-inline-border-top: var(--darkreader-border-3c3f44d9, rgba(119, 110, 98, 0.85)); --darkreader-inline-border-right: var(--darkreader-border-3c3f44d9, rgba(119, 110, 98, 0.85)); --darkreader-inline-border-bottom: var(--darkreader-border-3c3f44d9, rgba(119, 110, 98, 0.85)); --darkreader-inline-border-left: var(--darkreader-border-3c3f44d9, rgba(119, 110, 98, 0.85));" data-darkreader-inline-border-top="" data-darkreader-inline-border-right="" data-darkreader-inline-border-bottom="" data-darkreader-inline-border-left=""><div style="position: relative;"><div><div class="scene-container" style="position: relative; width: 1517px; height: 672px;"><div class="scene-nav-info">Left-click: rotate, Mouse-wheel/middle-click: zoom, Right-click: pan</div><div class="float-tooltip-kap" style="left: 1083.78px; display: none; top: 42.9618px; transform: translate(-71.4422%, 21px);"></div><canvas data-engine="three.js r152" width="1365" height="604" style="display: block; touch-action: none; width: 1517px; height: 672px;" class="clickable"></canvas></div></div><div class="graph-info-msg"></div></div></div>
+            <h3>Career Visualization (3D) - Click nodes to explore!</h3>
+            <div id="visNetwork" style="border: 1px solid rgba(55, 58, 63, 0.85); --darkreader-inline-border-top: var(--darkreader-border-373a3fd9, rgba(121, 112, 99, 0.85)); --darkreader-inline-border-right: var(--darkreader-border-373a3fd9, rgba(121, 112, 99, 0.85)); --darkreader-inline-border-bottom: var(--darkreader-border-373a3fd9, rgba(121, 112, 99, 0.85)); --darkreader-inline-border-left: var(--darkreader-border-373a3fd9, rgba(121, 112, 99, 0.85));" data-darkreader-inline-border-top="" data-darkreader-inline-border-right="" data-darkreader-inline-border-bottom="" data-darkreader-inline-border-left=""><div style="position: relative;"><div><div class="scene-container" style="position: relative; width: 1517px; height: 672px;"><div class="scene-nav-info">Left-click: rotate, Mouse-wheel/middle-click: zoom, Right-click: pan</div><div class="float-tooltip-kap" style="left: 1184.78px; display: none; top: 351.851px; transform: translate(-78.1001%, 21px);"></div><canvas data-engine="three.js r152" width="1365" height="604" style="display: block; touch-action: none; width: 1517px; height: 672px;" class="clickable"></canvas></div></div><div class="graph-info-msg"></div></div></div>
         </section>
 
         <section class="content-section" id="legend-section">
             <h3>Legend</h3>
             <p>Node colors and shapes represent different categories in Machine Learning:</p>
              <ul class="legend">
-                <li><span class="legend-color-indicator" style="background-color: rgb(160, 210, 219); --darkreader-inline-bgcolor: var(--darkreader-background-a0d2db, #24555e);" data-darkreader-inline-bgcolor=""></span><span class="legend-text">Foundations (Pillar)</span></li>
-                <li><span class="legend-color-indicator" style="background-color: rgb(247, 200, 224); --darkreader-inline-bgcolor: var(--darkreader-background-f7c8e0, #4e0b2d);" data-darkreader-inline-bgcolor=""></span><span class="legend-text">Mathematics (Category)</span></li>
-                <li><span class="legend-color-indicator" style="background-color: rgb(190, 225, 230); --darkreader-inline-bgcolor: var(--darkreader-background-bee1e6, #1d464c);" data-darkreader-inline-bgcolor=""></span><span class="legend-text">Data Science Core (Pillar)</span></li>
-                <li><span class="legend-color-indicator" style="background-color: rgb(169, 223, 191); --darkreader-inline-bgcolor: var(--darkreader-background-a9dfbf, #215940);" data-darkreader-inline-bgcolor=""></span><span class="legend-text">Core ML Models (Pillar)</span></li>
-                <li><span class="legend-color-indicator" style="background-color: rgb(212, 160, 249); --darkreader-inline-bgcolor: var(--darkreader-background-d4a0f9, #35393b);" data-darkreader-inline-bgcolor=""></span><span class="legend-text">Deep Learning (Pillar)</span></li>
-                <li><span class="legend-color-indicator" style="background-color: rgb(255, 179, 71); --darkreader-inline-bgcolor: var(--darkreader-background-ffb347, #a15f00);" data-darkreader-inline-bgcolor=""></span><span class="legend-text">NLP (Specialization)</span></li>
-                <li><span class="legend-color-indicator" style="background-color: rgb(135, 206, 235); --darkreader-inline-bgcolor: var(--darkreader-background-87ceeb, #135874);" data-darkreader-inline-bgcolor=""></span><span class="legend-text">Computer Vision (Specialization)</span></li>
-                <li><span class="legend-color-indicator" style="background-color: rgb(255, 218, 185); --darkreader-inline-bgcolor: var(--darkreader-background-ffdab9, #5d2c00);" data-darkreader-inline-bgcolor=""></span><span class="legend-text">Reinforcement Learning (Specialization)</span></li>
-                <li><span class="legend-color-indicator" style="background-color: rgb(254, 200, 154); --darkreader-inline-bgcolor: var(--darkreader-background-fec89a, #6f3401);" data-darkreader-inline-bgcolor=""></span><span class="legend-text">MLOps (Pillar)</span></li>
+                <li><span class="legend-color-indicator" style="background-color: rgb(160, 210, 219); --darkreader-inline-bgcolor: var(--darkreader-background-a0d2db, #24555e);" data-darkreader-inline-bgcolor=""></span><span class="legend-text">Foundations</span></li>
+                <li><span class="legend-color-indicator" style="background-color: rgb(247, 200, 224); --darkreader-inline-bgcolor: var(--darkreader-background-f7c8e0, #4e0b2d);" data-darkreader-inline-bgcolor=""></span><span class="legend-text">Mathematics</span></li>
+                <li><span class="legend-color-indicator" style="background-color: rgb(190, 225, 230); --darkreader-inline-bgcolor: var(--darkreader-background-bee1e6, #1d464c);" data-darkreader-inline-bgcolor=""></span><span class="legend-text">Data Science Core</span></li>
+                <li><span class="legend-color-indicator" style="background-color: rgb(169, 223, 191); --darkreader-inline-bgcolor: var(--darkreader-background-a9dfbf, #215940);" data-darkreader-inline-bgcolor=""></span><span class="legend-text">Core ML Models</span></li>
+                <li><span class="legend-color-indicator" style="background-color: rgb(212, 160, 249); --darkreader-inline-bgcolor: var(--darkreader-background-d4a0f9, #35393b);" data-darkreader-inline-bgcolor=""></span><span class="legend-text">Deep Learning</span></li>
+                <li><span class="legend-color-indicator" style="background-color: rgb(255, 179, 71); --darkreader-inline-bgcolor: var(--darkreader-background-ffb347, #a15f00);" data-darkreader-inline-bgcolor=""></span><span class="legend-text">NLP</span></li>
+                <li><span class="legend-color-indicator" style="background-color: rgb(135, 206, 235); --darkreader-inline-bgcolor: var(--darkreader-background-87ceeb, #135874);" data-darkreader-inline-bgcolor=""></span><span class="legend-text">Computer Vision</span></li>
+                <li><span class="legend-color-indicator" style="background-color: rgb(255, 218, 185); --darkreader-inline-bgcolor: var(--darkreader-background-ffdab9, #5d2c00);" data-darkreader-inline-bgcolor=""></span><span class="legend-text">Reinforcement Learning</span></li>
+                <li><span class="legend-color-indicator" style="background-color: rgb(254, 200, 154); --darkreader-inline-bgcolor: var(--darkreader-background-fec89a, #6f3401);" data-darkreader-inline-bgcolor=""></span><span class="legend-text">MLOps</span></li>
                 <li><span class="legend-color-indicator" style="background-color: rgb(178, 186, 187); --darkreader-inline-bgcolor: var(--darkreader-background-b2babb, #414649);" data-darkreader-inline-bgcolor=""></span><span class="legend-text">Tools &amp; Libraries</span></li>
-                <li><span class="legend-color-indicator" style="background-color: rgb(224, 187, 228); --darkreader-inline-bgcolor: var(--darkreader-background-e0bbe4, #491f4d);" data-darkreader-inline-bgcolor=""></span><span class="legend-text">Courses/Certs (General)</span></li>
+                <li><span class="legend-color-indicator" style="background-color: rgb(224, 187, 228); --darkreader-inline-bgcolor: var(--darkreader-background-e0bbe4, #491f4d);" data-darkreader-inline-bgcolor=""></span><span class="legend-text">Courses/Certs</span></li>
                 <li><span class="legend-color-indicator" style="background-color: rgb(199, 206, 234); --darkreader-inline-bgcolor: var(--darkreader-background-c7ceea, #2e3233);" data-darkreader-inline-bgcolor=""></span><span class="legend-text">General Concepts</span></li>
             </ul>
         </section>
@@ -176,44 +178,47 @@
             <div class="accordion">
                 <div class="accordion-item">
                     <div class="accordion-header"><strong>Phase 1: Foundational Knowledge (3-9 months)</strong><i class="fas fa-plus accordion-icon"></i></div>
-                    <div class="accordion-content" style="max-height: 0px;">
+                    <div class="accordion-content">
                         <ul>
-                            <li><strong>Mathematics:</strong> Linear Algebra, Calculus, Probability &amp; Statistics.</li>
-                            <li><strong>Programming:</strong> Python, NumPy, Pandas.</li>
-                            <li><strong>Computer Science Basics:</strong> Data Structures &amp; Algorithms, Git/GitHub.</li>
-                            <li><strong>Intro to Data Visualization:</strong> Matplotlib, Seaborn.</li>
+                            <li><strong>Mathematics:</strong> Linear Algebra (Vectors, Matrices, Eigenvalues/vectors), Calculus (Derivatives, Gradients, Integrals), Probability &amp; Statistics (Distributions, Hypothesis Testing, Bayes' Theorem, Regression basics).</li>
+                            <li><strong>Programming:</strong> Python (Core syntax, data structures, functions, classes, OOP basics), NumPy (Numerical computation), Pandas (Data manipulation).</li>
+                            <li><strong>Computer Science Basics:</strong> Data Structures &amp; Algorithms, Version Control (Git/GitHub).</li>
+                            <li><strong>Intro to Data Visualization:</strong> Matplotlib, Seaborn for basic plotting.</li>
                         </ul>
                     </div>
                 </div>
                 <div class="accordion-item">
                     <div class="accordion-header"><strong>Phase 2: Core Machine Learning (6-12 months)</strong><i class="fas fa-plus accordion-icon"></i></div>
-                    <div class="accordion-content" style="max-height: 0px;">
+                    <div class="accordion-content">
                         <ul>
-                            <li><strong>ML Concepts:</strong> Supervised/Unsupervised Learning, Model Evaluation, Bias-Variance, Overfitting, Cross-Validation.</li>
-                            <li><strong>Data Science Workflow:</strong> Data Preprocessing, Feature Engineering, EDA.</li>
-                            <li><strong>Traditional ML Algorithms:</strong> Linear/Logistic Regression, Decision Trees, Random Forests, GBMs, SVM, K-Means, KNN.</li>
+                            <li><strong>Machine Learning Concepts:</strong> Supervised Learning (Regression, Classification), Unsupervised Learning (Clustering, Dimensionality Reduction), Model Evaluation Metrics (Accuracy, Precision, Recall, F1, ROC/AUC, MSE, MAE), Bias-Variance Tradeoff, Overfitting/Underfitting, Cross-Validation.</li>
+                            <li><strong>Data Preprocessing &amp; Feature Engineering:</strong> Handling Missing Data, Outlier Detection, Data Scaling &amp; Normalization, Categorical Encoding, Feature Selection &amp; Extraction (PCA, t-SNE), Exploratory Data Analysis (EDA).</li>
+                            <li><strong>Traditional ML Algorithms:</strong> Linear/Logistic Regression, Decision Trees, Random Forests, Gradient Boosting Machines (XGBoost, LightGBM), Support Vector Machines (SVM), K-Means Clustering, K-Nearest Neighbors (KNN).</li>
                             <li><strong>Key Libraries:</strong> Scikit-learn.</li>
+                            <li><strong>Practical Projects:</strong> Start working on small datasets (e.g., from Kaggle, UCI ML Repository).</li>
                         </ul>
                     </div>
                 </div>
                 <div class="accordion-item">
                     <div class="accordion-header"><strong>Phase 3: Deep Learning &amp; Specialization (9-18+ months)</strong><i class="fas fa-plus accordion-icon"></i></div>
-                    <div class="accordion-content" style="max-height: 0px;">
+                    <div class="accordion-content">
                         <ul>
-                            <li><strong>Deep Learning Fundamentals:</strong> Neural Networks, CNNs, RNNs/LSTMs, Optimizers, Loss Functions, Regularization.</li>
-                            <li><strong>DL Frameworks:</strong> TensorFlow/Keras, PyTorch.</li>
-                            <li><strong>Specializations:</strong> NLP (Transformers), Computer Vision, Reinforcement Learning.</li>
-                            <li><strong>MLOps:</strong> Model Deployment, Monitoring, Versioning, Cloud ML.</li>
+                            <li><strong>Deep Learning Fundamentals:</strong> Neural Networks Basics (Neurons, Layers, Activation Functions, Backpropagation), Convolutional Neural Networks (CNNs), Recurrent Neural Networks (RNNs, LSTMs, GRUs), Optimizers, Loss Functions, Regularization (Dropout), Transfer Learning.</li>
+                            <li><strong>Deep Learning Frameworks:</strong> TensorFlow (with Keras), PyTorch.</li>
+                            <li><strong>Specializations:</strong> Natural Language Processing (NLP - Text Preprocessing, Word Embeddings, Transformers like BERT/GPT), Computer Vision (CV - Image Classification, Object Detection, Segmentation), Reinforcement Learning (RL).</li>
+                            <li><strong>MLOps (Machine Learning Operations):</strong> Model Deployment (Flask/Django APIs, Docker, Kubernetes), Model Monitoring, Versioning (DVC, MLflow), CI/CD, Cloud ML Platforms (AWS SageMaker, Google AI Platform, Azure ML).</li>
                         </ul>
                     </div>
                 </div>
                  <div class="accordion-item">
                     <div class="accordion-header"><strong>Phase 4: Advanced Practice &amp; Research (Ongoing)</strong><i class="fas fa-plus accordion-icon"></i></div>
-                    <div class="accordion-content" style="max-height: 0px;">
+                    <div class="accordion-content">
                         <ul>
-                            <li><strong>Advanced Topics:</strong> Generative AI, XAI, Federated Learning, Graph Neural Networks.</li>
-                            <li><strong>Research &amp; Innovation.</strong></li>
-                            <li><strong>Ethics in AI.</strong></li>
+                            <li><strong>Advanced Topics:</strong> Generative AI, Explainable AI (XAI), Federated Learning, Quantum ML, Graph Neural Networks.</li>
+                            <li><strong>Research &amp; Innovation:</strong> Reading and implementing research papers, contributing to open source.</li>
+                            <li><strong>Large-Scale Projects &amp; Domain Expertise.</strong></li>
+                            <li><strong>Ethics in AI:</strong> Understanding bias, fairness, and societal impact.</li>
+                            <li><span class="soft-skill-text"><strong>Mentorship &amp; Leadership.</strong></span></li>
                         </ul>
                     </div>
                 </div>
@@ -224,33 +229,69 @@
             <h3>Notable Courses &amp; Certifications</h3>
             <p>Focus on hands-on projects and understanding; courses supplement this.</p>
             <ul>
-                <li><strong>Foundational:</strong> Andrew Ng's ML Specialization, DeepLearning.AI TensorFlow Dev Cert, Math for ML Specialization, Fast.ai.</li>
-                <li><strong>Platform-Specific:</strong> Google Cloud ML Engineer, AWS ML Specialty, Azure AI/Data Scientist Associate.</li>
-                <li><strong>Specialized:</strong> Stanford CS224N (NLP), CS231n (CV), DeepMind RL Lectures.</li>
+                <li><strong>Foundational:</strong> Andrew Ng's Machine Learning Specialization (Coursera), DeepLearning.AI TensorFlow Developer Professional Certificate, Mathematics for Machine Learning Specialization (Coursera), Fast.ai Courses.</li>
+                <li><strong>Platform-Specific:</strong> Google Cloud Professional Machine Learning Engineer, AWS Certified Machine Learning - Specialty, Microsoft Certified: Azure AI Engineer/Data Scientist Associate.</li>
+                <li><strong>Specialized:</strong> Stanford CS224N (NLP), Stanford CS231n (CV), DeepMind x UCL Reinforcement Learning Lectures.</li>
             </ul>
         </section>
-        <div id="node-tooltip" class="node-tooltip-style" style="display: block; opacity: 0; left: 1146px; top: 281px;"><strong>Foundations</strong>Core concepts and prerequisites for starting your ML journey.</div>
+
+        <section class="content-section" id="soft-skills">
+            <h3>Crucial Soft Skills for ML</h3>
+            <ul>
+                <li><span class="soft-skill-text"><strong>Problem Solving &amp; Analytical Thinking</strong></span></li>
+                <li><span class="soft-skill-text"><strong>Statistical Intuition &amp; Data Sense</strong></span></li>
+                <li><span class="soft-skill-text"><strong>Communication (Written &amp; Verbal)</strong></span></li>
+                <li><span class="soft-skill-text"><strong>Continuous Learning &amp; Curiosity</strong></span></li>
+                <li><span class="soft-skill-text"><strong>Attention to Detail &amp; Rigor</strong></span></li>
+                <li><span class="soft-skill-text"><strong>Experimentation Mindset</strong></span></li>
+                <li><span class="soft-skill-text"><strong>Business Acumen</strong></span></li>
+                <li><span class="soft-skill-text"><strong>Ethical Awareness</strong></span></li>
+            </ul>
+        </section>
+
+        <section class="content-section" id="learning-resources">
+            <h3>Recommended Learning Resources</h3>
+            <ul>
+                <li><span class="resource-text"><strong>Platforms &amp; Competitions:</strong> Kaggle, Zindi.</span></li>
+                <li><span class="resource-text"><strong>Online Courses:</strong> Coursera, edX, Udacity, DataCamp, Fast.ai, DeepLearning.AI.</span></li>
+                <li><span class="resource-text"><strong>Books:</strong> "Hands-On Machine Learning" (Géron), "Pattern Recognition and Machine Learning" (Bishop), "Deep Learning" (Goodfellow et al.).</span></li>
+                <li><span class="resource-text"><strong>Documentation:</strong> Scikit-learn, TensorFlow, PyTorch, Pandas, NumPy.</span></li>
+                <li><span class="resource-text"><strong>Research Papers:</strong> ArXiv (cs.LG, cs.AI, stat.ML), PapersWithCode.</span></li>
+                <li><span class="resource-text"><strong>Blogs &amp; Communities:</strong> Towards Data Science, KDnuggets, Distill.pub, Reddit (r/MachineLearning, r/datascience).</span></li>
+            </ul>
+        </section>
+
     </div>
 
     <script>
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const modeIcon = document.getElementById('modeIcon');
         const getCssVar = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 
-        function applyTheme() { 
+        function applyTheme() {
+            if (darkModeToggle.checked) {
+                document.documentElement.classList.add('dark-mode');
+                modeIcon.classList.remove('fa-moon'); modeIcon.classList.add('fa-sun');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.classList.remove('dark-mode');
+                modeIcon.classList.remove('fa-sun'); modeIcon.classList.add('fa-moon');
+                localStorage.setItem('theme', 'light');
+            }
             const graphContainer = document.getElementById('visNetwork');
             if (graphContainer) {
                 graphContainer.style.border = `1px solid ${getCssVar('--border-glass-current')}`;
             }
             if(Graph) { 
-                Graph.backgroundColor(getCssVar('--bg-dark'));
-                Graph.scene().children.find(c => c instanceof THREE.AmbientLight)?.color.setHex(0x555555); // Slightly softer ambient for dark
-
+                Graph.backgroundColor(darkModeToggle.checked ? getCssVar('--bg-dark') : getCssVar('--bg-light'));
+                Graph.scene().children.find(c => c instanceof THREE.AmbientLight)?.color.setHex(darkModeToggle.checked ? 0x666666 : 0xaaaaaa);
                 Graph.graphData().nodes.forEach(node => {
                     if (node.__threeObj) {
                         const labelSprite = node.__threeObj.children.find(child => child.name === 'labelSprite');
                         if (labelSprite) { 
                             node.__threeObj.remove(labelSprite); 
-                            const newLabel = createTextLabel(node.name || node.id);
-                            const labelOffset = calculateLabelOffset(node);
+                            const newLabel = createTextLabel(node.name || node.id, node.color); 
+                            const labelOffset = (node.shape === 'cone' ? (node.size * 0.9) : (node.size * 0.6)) + 3;
                             newLabel.position.set(0, labelOffset, 0);
                             node.__threeObj.add(newLabel); 
                         }
@@ -259,31 +300,30 @@
                 updateNodeVisuals(); 
             }
         }
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') { darkModeToggle.checked = true; }
 
-        const DEFAULT_NODE_OPACITY = 0.9; // Slightly more opaque default
+        const DEFAULT_NODE_OPACITY = 0.85;
         const SELECTED_NODE_OPACITY = 1.0; 
-        const NEIGHBOR_NODE_OPACITY = 0.95; 
-        const DIMMED_NODE_OPACITY = 0.15; // Faintly visible for context
-
-        const DEFAULT_LABEL_OPACITY = 0.9;
-        const SELECTED_LABEL_OPACITY = 1.0; 
-        const NEIGHBOR_LABEL_OPACITY = 0.95;
-        const DIMMED_LABEL_OPACITY = 0.35; // More visible when dimmed for context
-
-        const DEFAULT_LINK_OPACITY = 0.1; // Very faint default links
+        const NEIGHBOR_NODE_OPACITY = 0.9; 
+        const DIMMED_NODE_OPACITY = 0.08; 
+        const DEFAULT_LABEL_OPACITY = 0.7;
+        const SELECTED_LABEL_OPACITY = 0.95; 
+        const NEIGHBOR_LABEL_OPACITY = 0.85; 
+        const DIMMED_LABEL_OPACITY = 0.05;
+        const DEFAULT_LINK_OPACITY = 0.15;
         const SELECTED_LINK_OPACITY = 0.7; 
-        const DIMMED_LINK_OPACITY = 0.01; // Almost invisible for non-relevant links
+        const DIMMED_LINK_OPACITY = 0.02;
 
         let Graph; 
         let currentSelectedNodeData = null;
         let highlightedNodesSet = new Set();
         let highlightedLinksSet = new Set();
-        let rawData; 
-        let tooltipElement;
+        let rawData; // Will hold the initial graph data for reference
 
         document.addEventListener('DOMContentLoaded', () => {
             applyTheme(); 
-            tooltipElement = document.getElementById('node-tooltip');
+            darkModeToggle.addEventListener('change', applyTheme);
 
             const accordions = document.querySelectorAll('.accordion-item');
             accordions.forEach(accordion => {
@@ -293,7 +333,7 @@
                     accordions.forEach(acc => {
                          if (acc !== accordion) {
                             acc.classList.remove('active');
-                            acc.querySelector('.accordion-content').style.maxHeight = '0';
+                            acc.querySelector('.accordion-content').style.maxHeight = 0;
                          }
                     });
                     if (!isActive) {
@@ -303,22 +343,13 @@
                     } else {
                         accordion.classList.remove('active');
                         const content = accordion.querySelector('.accordion-content');
-                        content.style.maxHeight = '0';
+                        content.style.maxHeight = 0;
                     }
                 });
             });
-            
-            const graphContainer = document.getElementById('visNetwork');
-            graphContainer.addEventListener('mousemove', (event) => {
-                if (tooltipElement.style.display === 'block') {
-                    let x = event.clientX + 15; let y = event.clientY + 15;
-                    if (x + tooltipElement.offsetWidth + 5 > window.innerWidth) { x = event.clientX - tooltipElement.offsetWidth - 15; }
-                    if (y + tooltipElement.offsetHeight + 5 > window.innerHeight) { y = event.clientY - tooltipElement.offsetHeight - 15; }
-                    tooltipElement.style.left = x + 'px'; tooltipElement.style.top = y + 'px';
-                }
-            });
 
             function attemptInitGraph(retries = 5, delay = 300) {
+                const graphContainer = document.getElementById('visNetwork');
                 const loadingMessageElement = graphContainer.querySelector('.loading-message');
                 if (typeof THREE !== 'undefined' && typeof ForceGraph3D !== 'undefined') {
                     if (loadingMessageElement) loadingMessageElement.textContent = "Libraries loaded. Initializing 3D Graph...";
@@ -356,159 +387,115 @@
                 'Tools & Libraries': '#B2BABB', 'Courses/Certs': '#E0BBE4', 'General Concepts': '#C7CEEA',
                 Specialization: '#f7a1a0' 
             };
-            
-            // Adjusted sizes and shapes for DAG layout and clarity
+
+            // Store the initial data in the global rawData variable
             rawData = { 
                 nodes: [
-                    // Level 0 - Pillars
-                    { id: 'Foundations', name: 'Foundations', group: 'Foundations', color: nodeColors.Foundations, shape: 'capsule', size: 16, description: 'Core concepts and prerequisites for starting your ML journey.' },
-                    { id: 'Data Science Core', name: 'Data Science Core', group: 'Data Science Core', color: nodeColors['Data Science Core'], shape: 'sphere', size: 14, description: 'The lifecycle of a data science project.' },
-                    { id: 'Core ML Concepts', name: 'Core ML Concepts', group: 'Core ML Models', color: nodeColors['Core ML Models'], shape: 'sphere', size: 14, description: 'Fundamental principles of machine learning and common algorithms.' },
-                    { id: 'Deep Learning', name: 'Deep Learning', group: 'Deep Learning', color: nodeColors['Deep Learning'], shape: 'sphere', size: 14, description: 'Using artificial neural networks with multiple layers.' },
-                    { id: 'Specializations', name: 'Specializations', group: 'Specialization', color: nodeColors.Specialization, shape: 'sphere', size: 14, description: 'Areas to focus on after mastering core ML/DL.' },
-                    { id: 'MLOps', name: 'MLOps', group: 'MLOps', color: nodeColors.MLOps, shape: 'sphere', size: 12, description: 'Deploying, managing, and monitoring ML models in production.' },
-
-                    // Level 1 - Key Categories / Foundational Libraries
-                    { id: 'Mathematics', name: 'Mathematics', group: 'Mathematics', color: nodeColors.Mathematics, shape: 'capsule', size: 11, description: 'Essential mathematical disciplines for ML.' },
-                    { id: 'Programming', name: 'Programming', group: 'Foundations', color: nodeColors.Foundations, shape: 'capsule', size: 11, description: 'Skills in a programming language, typically Python.' },
-                    { id: 'Python', name: 'Python', group: 'Tools & Libraries', color: nodeColors['Tools & Libraries'], shape: 'cylinder', size: 9, description: 'The most popular programming language for ML.' },
-                    { id: 'Scikit-learn', name: 'Scikit-learn', group: 'Tools & Libraries', color: nodeColors['Tools & Libraries'], shape: 'cylinder', size: 9, description: 'Comprehensive library for traditional ML.' },
-                    { id: 'NLP', name: 'Natural Language Processing (NLP)', group: 'NLP', color: nodeColors.NLP, shape: 'dodecahedron', size: 10, description: 'Enabling computers to understand human language.' },
-                    { id: 'Computer Vision', name: 'Computer Vision (CV)', group: 'Computer Vision', color: nodeColors['Computer Vision'], shape: 'dodecahedron', size: 10, description: 'Allowing computers to "see" and interpret visual information.' },
-                    { id: 'Reinforcement Learning', name: 'Reinforcement Learning (RL)', group: 'Reinforcement Learning', color: nodeColors['Reinforcement Learning'], shape: 'dodecahedron', size: 10, description: 'Training agents to make sequences of decisions.' },
-                    { id: 'TensorFlow/Keras', name: 'TensorFlow / Keras', group: 'Tools & Libraries', color: nodeColors['Tools & Libraries'], shape: 'cylinder', size: 9, description: 'Popular open-source libraries for deep learning.' },
-                    { id: 'PyTorch', name: 'PyTorch', group: 'Tools & Libraries', color: nodeColors['Tools & Libraries'], shape: 'cylinder', size: 9, description: 'Leading open-source deep learning framework.' },
-                    
-                    // Level 2 - Specific Skills / Concepts / Other Libraries
-                    { id: 'CS Basics', name: 'CS Basics', group: 'Foundations', color: nodeColors.Foundations, shape: 'sphere', size: 8, description: 'Fundamental computer science knowledge.' },
-                    { id: 'Linear Algebra', name: 'Linear Algebra', group: 'Mathematics', color: nodeColors.Mathematics, shape: 'cube', size: 8, description: 'Study of vectors, matrices, and linear transformations.' },
-                    { id: 'Calculus', name: 'Calculus', group: 'Mathematics', color: nodeColors.Mathematics, shape: 'cube', size: 8, description: 'Focus on derivatives and gradients for optimization.' },
-                    { id: 'Probability & Stats', name: 'Probability & Stats', group: 'Mathematics', color: nodeColors.Mathematics, shape: 'cube', size: 8, description: 'Understanding data distributions, hypothesis testing, etc.' },
-                    { id: 'NumPy', name: 'NumPy', group: 'Tools & Libraries', color: nodeColors['Tools & Libraries'], shape: 'cylinder', size: 7, description: 'Fundamental package for numerical computation in Python.' },
-                    { id: 'Pandas', name: 'Pandas', group: 'Tools & Libraries', color: nodeColors['Tools & Libraries'], shape: 'cylinder', size: 7, description: 'Powerful library for data manipulation and analysis.' },
-                    { id: 'Git/GitHub', name: 'Git/GitHub', group: 'Tools & Libraries', color: nodeColors['Tools & Libraries'], shape: 'cylinder', size: 7, description: 'Version control and collaboration platform.' },
-                    { id: 'Matplotlib/Seaborn', name: 'Matplotlib/Seaborn', group: 'Tools & Libraries', color: nodeColors['Tools & Libraries'], shape: 'cylinder', size: 7, description: 'Python libraries for visualizations.' },
-                    { id: 'Data Collection', name: 'Data Collection', group: 'Data Science Core', color: nodeColors['Data Science Core'], shape: 'sphere', size: 8, description: 'Techniques for gathering data.' },
-                    { id: 'EDA', name: 'Exploratory Data Analysis (EDA)', group: 'Data Science Core', color: nodeColors['Data Science Core'], shape: 'sphere', size: 8, description: 'Analyzing datasets to summarize characteristics.' },
-                    { id: 'Data Preprocessing', name: 'Data Preprocessing', group: 'Data Science Core', color: nodeColors['Data Science Core'], shape: 'sphere', size: 9, description: 'Cleaning and transforming raw data.' },
-                    { id: 'Feature Engineering', name: 'Feature Engineering', group: 'Data Science Core', color: nodeColors['Data Science Core'], shape: 'sphere', size: 8, description: 'Creating new input features from existing data.' },
-                    { id: 'Supervised Learning', name: 'Supervised Learning', group: 'Core ML Models', color: nodeColors['Core ML Models'], shape: 'sphere', size: 8, description: 'Learning from labeled data to make predictions.' },
-                    { id: 'Unsupervised Learning', name: 'Unsupervised Learning', group: 'Core ML Models', color: nodeColors['Core ML Models'], shape: 'sphere', size: 8, description: 'Finding patterns in unlabeled data.' },
-                    { id: 'Model Evaluation', name: 'Model Evaluation & Validation', group: 'Core ML Models', color: nodeColors['Core ML Models'], shape: 'cone', size: 9, description: 'Assessing model performance.' }, // Cone for distinct process step
-                    { id: 'Linear Models', name: 'Linear Models', group: 'Core ML Models', color: nodeColors['Core ML Models'], shape: 'sphere', size: 7, description: 'E.g., Linear/Logistic Regression.' },
-                    { id: 'Tree-based Models', name: 'Tree-based Models', group: 'Core ML Models', color: nodeColors['Core ML Models'], shape: 'sphere', size: 7, description: 'E.g., DT, RF, GBM.' },
-                    { id: 'SVM', name: 'Support Vector Machines (SVM)', group: 'Core ML Models', color: nodeColors['Core ML Models'], shape: 'sphere', size: 7, description: 'Powerful classification algorithm.' },
-                    { id: 'Clustering Algos', name: 'Clustering Algos', group: 'Core ML Models', color: nodeColors['Core ML Models'], shape: 'sphere', size: 7, description: 'E.g., K-Means, Hierarchical.' },
-                    { id: 'Neural Networks', name: 'Neural Networks Basics', group: 'Deep Learning', color: nodeColors['Deep Learning'], shape: 'sphere', size: 9, description: 'Fundamental building blocks of NNs.' },
-                    { id: 'CNNs', name: 'Convolutional Neural Networks (CNNs)', group: 'Deep Learning', color: nodeColors['Deep Learning'], shape: 'sphere', size: 8, description: 'Specialized NNs for grid-like data (images).' },
-                    { id: 'RNNs/LSTMs', name: 'RNNs/LSTMs/GRUs', group: 'Deep Learning', color: nodeColors['Deep Learning'], shape: 'sphere', size: 8, description: 'NNs for sequential data (text, time series).' },
-                    { id: 'Transformers', name: 'Transformers (BERT, GPT)', group: 'Deep Learning', color: nodeColors['Deep Learning'], shape: 'dodecahedron', size: 8, description: 'Advanced architecture using attention mechanisms.' },
-                    { id: 'Time Series', name: 'Time Series Analysis', group: 'Specialization', color: nodeColors.Specialization, shape: 'cone', size: 8, description: 'Analyzing and forecasting time-ordered data.' },
-                    { id: 'Recommender Systems', name: 'Recommender Systems', group: 'Specialization', color: nodeColors.Specialization, shape: 'cone', size: 8, description: 'Predicting user preferences.' },
-                    { id: 'Model Deployment', name: 'Model Deployment', group: 'MLOps', color: nodeColors.MLOps, shape: 'sphere', size: 8, description: 'Making ML models available for use.' },
-                    { id: 'Model Monitoring', name: 'Model Monitoring & Versioning', group: 'MLOps', color: nodeColors.MLOps, shape: 'sphere', size: 8, description: 'Tracking performance and managing versions.' },
-                    { id: 'Cloud ML Platforms', name: 'Cloud ML Platforms', group: 'MLOps', color: nodeColors.MLOps, shape: 'capsule', size: 8, description: 'E.g., AWS SageMaker, GCP AI Platform, Azure ML.' },
-                    { id: 'Docker/Kubernetes', name: 'Docker/Kubernetes for ML', group: 'Tools & Libraries', color: nodeColors['Tools & Libraries'], shape: 'cylinder', size: 7, description: 'Containerization and orchestration for ML.' },
-                    { id: 'Ethics in AI', name: 'Ethics in AI', group: 'General Concepts', color: nodeColors['General Concepts'], shape: 'capsule', size: 9, description: 'Considering fairness, bias, and societal impact.' },
-                    { id: 'Courses/Certs', name: 'Courses/Certs', group: 'Courses/Certs', color: nodeColors['Courses/Certs'], shape: 'sphere', size: 9, description: 'Resources for structured learning and validation.' },
+                    { id: 'Foundations', name: 'Foundations', group: 'Foundations', color: nodeColors.Foundations, shape: 'capsule', size: 12 },
+                    { id: 'Mathematics', name: 'Mathematics', group: 'Mathematics', color: nodeColors.Mathematics, shape: 'sphere', size: 10 },
+                    { id: 'Programming', name: 'Programming', group: 'Foundations', color: nodeColors.Foundations, shape: 'capsule', size: 9 },
+                    { id: 'CS Basics', name: 'CS Basics', group: 'Foundations', color: nodeColors.Foundations, shape: 'capsule', size: 7 },
+                    { id: 'Linear Algebra', name: 'Linear Algebra', group: 'Mathematics', color: nodeColors.Mathematics, shape: 'cube', size: 7 },
+                    { id: 'Calculus', name: 'Calculus', group: 'Mathematics', color: nodeColors.Mathematics, shape: 'cube', size: 7 },
+                    { id: 'Probability & Stats', name: 'Probability & Stats', group: 'Mathematics', color: nodeColors.Mathematics, shape: 'cube', size: 8 },
+                    { id: 'Python', name: 'Python', group: 'Tools & Libraries', color: nodeColors['Tools & Libraries'], shape: 'cylinder', size: 7 },
+                    { id: 'NumPy', name: 'NumPy', group: 'Tools & Libraries', color: nodeColors['Tools & Libraries'], shape: 'cylinder', size: 6 },
+                    { id: 'Pandas', name: 'Pandas', group: 'Tools & Libraries', color: nodeColors['Tools & Libraries'], shape: 'cylinder', size: 6 },
+                    { id: 'Git/GitHub', name: 'Git/GitHub', group: 'Tools & Libraries', color: nodeColors['Tools & Libraries'], shape: 'cylinder', size: 5 },
+                    { id: 'Matplotlib/Seaborn', name: 'Matplotlib/Seaborn', group: 'Tools & Libraries', color: nodeColors['Tools & Libraries'], shape: 'cylinder', size: 5 },
+                    { id: 'Scikit-learn', name: 'Scikit-learn', group: 'Tools & Libraries', color: nodeColors['Tools & Libraries'], shape: 'cylinder', size: 7 },
+                    { id: 'Data Science Core', name: 'Data Science Core', group: 'Data Science Core', color: nodeColors['Data Science Core'], shape: 'sphere', size: 10 },
+                    { id: 'Data Collection', name: 'Data Collection', group: 'Data Science Core', color: nodeColors['Data Science Core'], shape: 'cube', size: 6 },
+                    { id: 'EDA', name: 'Exploratory Data Analysis (EDA)', group: 'Data Science Core', color: nodeColors['Data Science Core'], shape: 'cube', size: 7 },
+                    { id: 'Data Preprocessing', name: 'Data Preprocessing', group: 'Data Science Core', color: nodeColors['Data Science Core'], shape: 'cube', size: 8 },
+                    { id: 'Feature Engineering', name: 'Feature Engineering', group: 'Data Science Core', color: nodeColors['Data Science Core'], shape: 'cube', size: 7 },
+                    { id: 'Core ML Concepts', name: 'Core ML Concepts', group: 'Core ML Models', color: nodeColors['Core ML Models'], shape: 'sphere', size: 10 },
+                    { id: 'Supervised Learning', name: 'Supervised Learning', group: 'Core ML Models', color: nodeColors['Core ML Models'], shape: 'capsule', size: 7 },
+                    { id: 'Unsupervised Learning', name: 'Unsupervised Learning', group: 'Core ML Models', color: nodeColors['Core ML Models'], shape: 'capsule', size: 7 },
+                    { id: 'Model Evaluation', name: 'Model Evaluation & Validation', group: 'Core ML Models', color: nodeColors['Core ML Models'], shape: 'cone', size: 8 },
+                    { id: 'Linear Models', name: 'Linear Models (Regression, Logistic)', group: 'Core ML Models', color: nodeColors['Core ML Models'], shape: 'cube', size: 6 },
+                    { id: 'Tree-based Models', name: 'Tree-based Models (DT, RF, GBM)', group: 'Core ML Models', color: nodeColors['Core ML Models'], shape: 'cube', size: 7 },
+                    { id: 'SVM', name: 'Support Vector Machines (SVM)', group: 'Core ML Models', color: nodeColors['Core ML Models'], shape: 'cube', size: 6 },
+                    { id: 'Clustering Algos', name: 'Clustering (K-Means, Hierarchical)', group: 'Core ML Models', color: nodeColors['Core ML Models'], shape: 'cube', size: 6 },
+                    { id: 'Deep Learning', name: 'Deep Learning', group: 'Deep Learning', color: nodeColors['Deep Learning'], shape: 'sphere', size: 10 },
+                    { id: 'Neural Networks', name: 'Neural Networks Basics', group: 'Deep Learning', color: nodeColors['Deep Learning'], shape: 'capsule', size: 8 },
+                    { id: 'CNNs', name: 'Convolutional Neural Networks (CNNs)', group: 'Deep Learning', color: nodeColors['Deep Learning'], shape: 'cube', size: 7 },
+                    { id: 'RNNs/LSTMs', name: 'RNNs/LSTMs/GRUs', group: 'Deep Learning', color: nodeColors['Deep Learning'], shape: 'cube', size: 7 },
+                    { id: 'Transformers', name: 'Transformers (BERT, GPT)', group: 'Deep Learning', color: nodeColors['Deep Learning'], shape: 'dodecahedron', size: 7 },
+                    { id: 'TensorFlow/Keras', name: 'TensorFlow / Keras', group: 'Tools & Libraries', color: nodeColors['Tools & Libraries'], shape: 'cylinder', size: 7 },
+                    { id: 'PyTorch', name: 'PyTorch', group: 'Tools & Libraries', color: nodeColors['Tools & Libraries'], shape: 'cylinder', size: 7 },
+                    { id: 'Specializations', name: 'Specializations', group: 'Specialization', color: nodeColors.Specialization, shape: 'sphere', size: 10 },
+                    { id: 'NLP', name: 'Natural Language Processing (NLP)', group: 'NLP', color: nodeColors.NLP, shape: 'dodecahedron', size: 9 },
+                    { id: 'Computer Vision', name: 'Computer Vision (CV)', group: 'Computer Vision', color: nodeColors['Computer Vision'], shape: 'dodecahedron', size: 9 },
+                    { id: 'Reinforcement Learning', name: 'Reinforcement Learning (RL)', group: 'Reinforcement Learning', color: nodeColors['Reinforcement Learning'], shape: 'dodecahedron', size: 9 },
+                    { id: 'Time Series', name: 'Time Series Analysis', group: 'Specialization', color: nodeColors.Specialization, shape: 'cone', size: 7 },
+                    { id: 'Recommender Systems', name: 'Recommender Systems', group: 'Specialization', color: nodeColors.Specialization, shape: 'cone', size: 7 },
+                    { id: 'MLOps', name: 'MLOps', group: 'MLOps', color: nodeColors.MLOps, shape: 'sphere', size: 9 },
+                    { id: 'Model Deployment', name: 'Model Deployment', group: 'MLOps', color: nodeColors.MLOps, shape: 'cube', size: 7 },
+                    { id: 'Model Monitoring', name: 'Model Monitoring & Versioning', group: 'MLOps', color: nodeColors.MLOps, shape: 'cube', size: 7 },
+                    { id: 'Cloud ML Platforms', name: 'Cloud ML Platforms (AWS, GCP, Azure)', group: 'MLOps', color: nodeColors.MLOps, shape: 'capsule', size: 7 },
+                    { id: 'Docker/Kubernetes', name: 'Docker/Kubernetes for ML', group: 'Tools & Libraries', color: nodeColors['Tools & Libraries'], shape: 'cylinder', size: 6 },
+                    { id: 'Ethics in AI', name: 'Ethics in AI', group: 'General Concepts', color: nodeColors['General Concepts'], shape: 'capsule', size: 7 },
+                    { id: 'Courses/Certs', name: 'Courses/Certs', group: 'Courses/Certs', color: nodeColors['Courses/Certs'], shape: 'sphere', size: 8 },
                 ],
-                links: [ // Ensure links flow logically for DAG (source -> target means source is a prerequisite)
+                links: [ 
                     { source: 'Foundations', target: 'Mathematics' }, { source: 'Foundations', target: 'Programming' }, { source: 'Foundations', target: 'CS Basics' },
-                    { source: 'Foundations', target: 'Data Science Core'}, { source: 'Foundations', target: 'Ethics in AI' }, { source: 'Foundations', target: 'Courses/Certs'},
-
                     { source: 'Mathematics', target: 'Linear Algebra' }, { source: 'Mathematics', target: 'Calculus' }, { source: 'Mathematics', target: 'Probability & Stats' },
                     { source: 'Programming', target: 'Python' }, { source: 'Python', target: 'NumPy' }, { source: 'Python', target: 'Pandas' },
-                    { source: 'CS Basics', target: 'Git/GitHub' }, 
-                    
-                    { source: 'Data Science Core', target: 'Data Collection' }, { source: 'Data Science Core', target: 'EDA' }, 
+                    { source: 'CS Basics', target: 'Git/GitHub' }, { source: 'Foundations', target: 'Data Science Core' },
+                    { source: 'Data Science Core', target: 'Data Collection' }, { source: 'Data Science Core', target: 'EDA' }, { source: 'EDA', target: 'Matplotlib/Seaborn' },
                     { source: 'Data Science Core', target: 'Data Preprocessing' }, { source: 'Data Science Core', target: 'Feature Engineering' },
-                    { source: 'Data Science Core', target: 'Core ML Concepts' },
-                    { source: 'Pandas', target: 'EDA' }, { source: 'Pandas', target: 'Data Preprocessing' },
-                    { source: 'EDA', target: 'Matplotlib/Seaborn' },
-                    
+                    { source: 'Pandas', target: 'EDA' }, { source: 'Pandas', target: 'Data Preprocessing' }, { source: 'Data Science Core', target: 'Core ML Concepts' },
                     { source: 'Core ML Concepts', target: 'Supervised Learning' }, { source: 'Core ML Concepts', target: 'Unsupervised Learning' },
                     { source: 'Core ML Concepts', target: 'Model Evaluation' }, { source: 'Core ML Concepts', target: 'Scikit-learn' },
-                    { source: 'Core ML Concepts', target: 'Deep Learning' }, { source: 'Core ML Concepts', target: 'MLOps'},
-                    { source: 'Probability & Stats', target: 'Core ML Concepts' }, { source: 'Linear Algebra', target: 'Core ML Concepts' }, { source: 'Calculus', target: 'Neural Networks' }, // Calculus for backprop specifically
-
                     { source: 'Supervised Learning', target: 'Linear Models' }, { source: 'Supervised Learning', target: 'Tree-based Models' }, { source: 'Supervised Learning', target: 'SVM' },
-                    { source: 'Unsupervised Learning', target: 'Clustering Algos' }, 
-                    
-                    { source: 'Deep Learning', target: 'Neural Networks' },
+                    { source: 'Unsupervised Learning', target: 'Clustering Algos' }, { source: 'Probability & Stats', target: 'Core ML Concepts' }, 
+                    { source: 'Linear Algebra', target: 'Core ML Concepts' }, { source: 'Core ML Concepts', target: 'Deep Learning' },
+                    { source: 'Deep Learning', target: 'Neural Networks' }, { source: 'Neural Networks', target: 'Calculus' },
                     { source: 'Deep Learning', target: 'CNNs' }, { source: 'Deep Learning', target: 'RNNs/LSTMs' }, { source: 'Deep Learning', target: 'Transformers' },
-                    { source: 'Deep Learning', target: 'TensorFlow/Keras' }, { source: 'Deep Learning', target: 'PyTorch' }, 
-                    { source: 'Deep Learning', target: 'Specializations' }, {source: 'Deep Learning', target: 'MLOps'}, // DL also feeds into MLOps
-                    
+                    { source: 'Deep Learning', target: 'TensorFlow/Keras' }, { source: 'Deep Learning', target: 'PyTorch' }, { source: 'Deep Learning', target: 'Specializations' },
                     { source: 'Specializations', target: 'NLP' }, { source: 'Specializations', target: 'Computer Vision' }, { source: 'Specializations', target: 'Reinforcement Learning' },
                     { source: 'Specializations', target: 'Time Series' }, { source: 'Specializations', target: 'Recommender Systems' },
-                    { source: 'Specializations', target: 'Ethics in AI' }, // Ethics relevant at advanced stages too
-
                     { source: 'CNNs', target: 'Computer Vision' }, { source: 'RNNs/LSTMs', target: 'NLP' }, { source: 'Transformers', target: 'NLP' },
-                    
+                    { source: 'Core ML Concepts', target: 'MLOps' }, { source: 'Deep Learning', target: 'MLOps' },
                     { source: 'MLOps', target: 'Model Deployment' }, { source: 'MLOps', target: 'Model Monitoring' }, { source: 'MLOps', target: 'Cloud ML Platforms' },
-                    { source: 'Model Deployment', target: 'Docker/Kubernetes' },
-                    
+                    { source: 'Model Deployment', target: 'Docker/Kubernetes' }, { source: 'Foundations', target: 'Ethics in AI' }, 
+                    { source: 'Specializations', target: 'Ethics in AI' }, { source: 'Foundations', target: 'Courses/Certs' }, 
                     { source: 'Core ML Concepts', target: 'Courses/Certs' }, { source: 'Deep Learning', target: 'Courses/Certs' }
                 ]
             };
             rawData.links.forEach((link, i) => link.id = `link-${i}`);
 
 
-            function createTextLabel(text) {
-                const originalText = (text || "NO NAME").toUpperCase();
-                const fontSize = 22; // Slightly smaller for potentially more labels in view with DAG
-                const padding = 10; 
-                const canvas = document.createElement('canvas'); 
-                const ctx = canvas.getContext('2d');
-                ctx.font = `700 ${fontSize}px Poppins, Arial, sans-serif`;
-
-                const textMetrics = ctx.measureText(originalText); 
-                const textWidth = textMetrics.width;
-                const width = textWidth + padding * 2; 
-                const height = fontSize + padding * 1.5; 
-                
-                canvas.width = width * 2; canvas.height = height * 2; ctx.scale(2, 2); 
-
-                ctx.fillStyle = 'rgba(20, 23, 28, 0.92)'; // Dark, highly opaque background
+            function createTextLabel(text, nodeColor) {
+                const fontSize = 20; const padding = 10;
+                const canvas = document.createElement('canvas'); const ctx = canvas.getContext('2d');
+                ctx.font = `600 ${fontSize}px Poppins, Arial, sans-serif`;
+                const textMetrics = ctx.measureText(text); const textWidth = textMetrics.width;
+                const width = textWidth + padding * 2; const height = fontSize + padding * 1.5;
+                canvas.width = width * 2; canvas.height = height * 2; ctx.scale(2, 2);
+                ctx.fillStyle = darkModeToggle.checked ? 'rgba(50, 55, 60, 0.7)' : 'rgba(250, 250, 255, 0.7)';
                 ctx.roundRect(0, 0, width, height, 8); ctx.fill();
-                
-                ctx.fillStyle = '#E0E0E0'; // Light text for contrast
+                ctx.fillStyle = darkModeToggle.checked ? '#F0F0F0' : '#222222';
                 ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-                ctx.fillText(originalText, width / 2, height / 2);
-
-                const texture = new THREE.CanvasTexture(canvas); 
-                texture.minFilter = THREE.LinearFilter; texture.needsUpdate = true;
-                
-                const material = new THREE.SpriteMaterial({ map: texture, depthTest:false, transparent: true });
+                ctx.fillText(text, width / 2, height / 2);
+                const texture = new THREE.CanvasTexture(canvas); texture.minFilter = THREE.LinearFilter; texture.needsUpdate = true;
+                const material = new THREE.SpriteMaterial({ map: texture, depthTest:false, transparent: true, opacity: DEFAULT_LABEL_OPACITY });
                 const sprite = new THREE.Sprite(material); sprite.name = 'labelSprite';
-                sprite.scale.set(width / 12, height / 12, 1); // Adjust scale as needed
-                return sprite;
-            }
-
-            function calculateLabelOffset(node) {
-                const size = node.size || 5;
-                let baseOffset = 0;
-                // Adjust offset based on shape to ensure label is above the geometry
-                if (node.shape === 'cone') baseOffset = size * 0.9;
-                else if (node.shape === 'capsule') baseOffset = size * 0.7;
-                else if (node.shape === 'cylinder') baseOffset = size * 0.8;
-                else baseOffset = size * 0.6; // Sphere, cube, dodecahedron
-                return baseOffset + (size > 10 ? 4 : 3.5) ; // Add a bit more padding, especially for larger nodes
+                sprite.scale.set(width / 10, height / 10, 1); return sprite;
             }
             
             function createNodeShape(node) {
                 let geometry; const size = node.size || 5;
-                // Scale factor for visual sizing, as DAG might space them out more
-                const s = size * 0.8; // Make nodes a bit smaller overall if DAG spaces them
                 switch (node.shape) {
-                    case 'cube': geometry = new THREE.BoxGeometry(s, s, s); break;
-                    case 'cone': geometry = new THREE.ConeGeometry(s / 1.5, s * 1.8, 16); break;
-                    case 'cylinder': geometry = new THREE.CylinderGeometry(s*0.7, s*0.7, s*1.5, 16); break;
-                    case 'capsule': geometry = new THREE.CapsuleGeometry(s*0.6, s*1.2, 8, 16); break;
-                    case 'dodecahedron': geometry = new THREE.DodecahedronGeometry(s*0.8, 0); break;
-                    default: geometry = new THREE.SphereGeometry(s, 20, 10); break; // Simpler sphere
+                    case 'cube': geometry = new THREE.BoxGeometry(size, size, size); break;
+                    case 'cone': geometry = new THREE.ConeGeometry(size / 1.5, size * 1.8, 16); break;
+                    case 'cylinder': geometry = new THREE.CylinderGeometry(size*0.7, size*0.7, size*1.5, 16); break;
+                    case 'capsule': geometry = new THREE.CapsuleGeometry(size*0.6, size*1.2, 8, 16); break;
+                    case 'dodecahedron': geometry = new THREE.DodecahedronGeometry(size*0.8, 0); break;
+                    default: geometry = new THREE.SphereGeometry(size, 24, 12); break;
                 }
-                const material = new THREE.MeshPhongMaterial({ color: node.color || '#cccccc', shininess: 20, transparent: true });
+                const material = new THREE.MeshPhongMaterial({ color: node.color || '#cccccc', shininess: 30, transparent: true, opacity: DEFAULT_NODE_OPACITY });
                 const mesh = new THREE.Mesh(geometry, material);
                 mesh.userData.defaultColor = new THREE.Color(node.color || '#cccccc'); return mesh;
             }
@@ -519,86 +506,107 @@
                 .nodeId('id')
                 .nodeThreeObject(node => {
                     const obj = createNodeShape(node);
-                    const label = createTextLabel(node.name || node.id);
-                    const labelOffset = calculateLabelOffset(node);
-                    label.position.set(0, labelOffset, 0); // Position label above node
+                    const label = createTextLabel(node.name || node.id, node.color);
+                    const labelOffset = (node.shape === 'cone' ? (node.size * 0.9) : (node.size * 0.6)) + 3;
+                    label.position.set(0, labelOffset, 0);
                     obj.add(label);
                     node.__threeObj = obj; 
-                    obj.visible = true; label.visible = true;
+                    obj.visible = true; 
+                    label.visible = true;
                     return obj;
                 })
-                .linkWidth(0.8) // Slightly thicker links
+                .linkWidth(0.7)
                 .linkMaterial(link => { 
                     const isMainHighlightedLink = highlightedLinksSet.has(link.id);
-                    let opacity = currentSelectedNodeData ? (isMainHighlightedLink ? SELECTED_LINK_OPACITY : DIMMED_LINK_OPACITY) : DEFAULT_LINK_OPACITY;
-                    const color = isMainHighlightedLink ? '#ffa500' : 0x9e9e9e; // Softer grey for default selected links
-                    const material = new THREE.MeshBasicMaterial({ color: color, transparent: true, opacity: opacity });
+                    let opacity;
+
+                    if (currentSelectedNodeData) {
+                        if (isMainHighlightedLink) {
+                            opacity = SELECTED_LINK_OPACITY;
+                        } else {
+                            opacity = DIMMED_LINK_OPACITY;
+                        }
+                    } else {
+                        opacity = DEFAULT_LINK_OPACITY;
+                    }
+
+                    const color = isMainHighlightedLink ?
+                                  (darkModeToggle.checked ? '#ffa500' : '#ff8c00') :
+                                  (darkModeToggle.checked ? 0xaaaaaa : 0x666666);
+
+                    const material = new THREE.MeshBasicMaterial({
+                        color: color,
+                        transparent: true,
+                        opacity: opacity
+                    });
                     if (link.__threeObj) link.__threeObj.visible = true;
                     return material;
                 })
-                .linkColor(link => highlightedLinksSet.has(link.id) ? '#ffa500' : 'rgba(158,158,158,0.1)') // Softer default link color
+                .linkColor(link => { // This acts as a fallback or can be primary if material isn't used for color
+                    if (highlightedLinksSet.has(link.id)) {
+                        return darkModeToggle.checked ? '#ffa500' : '#ff8c00';
+                    }
+                    return darkModeToggle.checked ? 'rgba(180,180,180,0.1)' : 'rgba(100,100,100,0.15)';
+                })
                 .linkDirectionalParticles(link => highlightedLinksSet.has(link.id) ? 2 : 0) 
-                .linkDirectionalParticleWidth(1.8) // Slightly wider particles
-                .linkDirectionalParticleColor(() => '#FFD700')
-                .backgroundColor(getCssVar('--bg-dark'))
+                .linkDirectionalParticleWidth(link => highlightedLinksSet.has(link.id) ? 1.5 : 0.5)
+                .linkDirectionalParticleColor(link => highlightedLinksSet.has(link.id) ? (darkModeToggle.checked ? '#FFD700' : '#FFA500') : (darkModeToggle.checked ? '#666666' : '#AAAAAA'))
+                .backgroundColor(darkModeToggle.checked ? getCssVar('--bg-dark') : getCssVar('--bg-light'))
                 .enableNodeDrag(false) 
-                .dagMode('td') // Top-Down Directed Acyclic Graph layout
-                .dagLevelDistance(70) // Distance between DAG levels
-                .cooldownTicks(200) // Let DAG settle
+                .cooldownTicks(300) 
                 .onEngineStop(() => { 
-                    // With DAG mode, fixing positions might be less critical or might fight the DAG layout
-                    // Graph.graphData().nodes.forEach(node => { node.fx = node.x; node.fy = node.y; node.fz = node.z; });
-                    console.log("Engine stopped. DAG layout applied.");
-                    // Adjust camera to view the DAG structure better
-                    Graph.cameraPosition({ x: 0, y: -150, z: 450 }, {x:0, y:50, z:0}, 1200); // y adjusted to look slightly down if td
+                    Graph.graphData().nodes.forEach(node => { node.fx = node.x; node.fy = node.y; node.fz = node.z; });
+                    console.log("Engine stopped, nodes fixed.");
+                    Graph.cameraPosition({ x: 0, y: 0, z: 350 }, { x: 0, y: 0, z: 0 }, 1200); 
                 })
                 .onNodeClick(handleNodeClick)
-                .onBackgroundClick(resetSelectionAndCamera)
-                .onNodeHover((node, prevNode) => {
-                    if (node && node.description) {
-                        tooltipElement.innerHTML = `<strong>${node.name}</strong>${node.description}`;
-                        tooltipElement.style.display = 'block'; tooltipElement.style.opacity = '1';
-                    } else {
-                        tooltipElement.style.opacity = '0';
-                        setTimeout(() => { if (tooltipElement.style.opacity === '0') { tooltipElement.style.display = 'none';}}, 150);
-                    }
-                });
+                .onBackgroundClick(resetSelectionAndCamera);
 
-            Graph.scene().add(new THREE.AmbientLight(0x555555, 0.9)); // Adjusted ambient
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6); // Softer directional
-            directionalLight.position.set(80, 120, 200);
+            Graph.scene().add(new THREE.AmbientLight(darkModeToggle.checked ? 0x666666 : 0xaaaaaa, 0.8));
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.7);
+            directionalLight.position.set(60, 100, 150);
             Graph.scene().add(directionalLight);
-            updateNodeVisuals();
         }
         
         function resetSelection() {
             if (!Graph) return;
             currentSelectedNodeData = null;
-            highlightedNodesSet.clear(); highlightedLinksSet.clear();
+            highlightedNodesSet.clear();
+            highlightedLinksSet.clear();
             updateNodeVisuals();
         }
 
         function resetSelectionAndCamera() {
             resetSelection();
             if (Graph) { 
-                 Graph.cameraPosition({ x: 0, y: -150, z: 450 }, {x:0, y:50, z:0}, 1200); // Reset to DAG overview
+                 Graph.cameraPosition({ x: 0, y: 0, z: 350 }, { x: 0, y: 0, z: 0 }, 1200);
             }
         }
 
         function handleNodeClick(node) { 
             if (!Graph) return;
+
             if (currentSelectedNodeData && currentSelectedNodeData.id === node.id) {
                 resetSelection(); 
             } else {
                 currentSelectedNodeData = node; 
-                highlightedNodesSet.clear(); highlightedLinksSet.clear();
+                highlightedNodesSet.clear();
+                highlightedLinksSet.clear();
+
                 highlightedNodesSet.add(node.id); 
 
                 rawData.links.forEach(linkDef => { 
                     const sourceId = typeof linkDef.source === 'string' ? linkDef.source : linkDef.source.id;
                     const targetId = typeof linkDef.target === 'string' ? linkDef.target : linkDef.target.id;
-                    if (sourceId === node.id) { highlightedNodesSet.add(targetId); highlightedLinksSet.add(linkDef.id); }
-                    else if (targetId === node.id) { highlightedNodesSet.add(sourceId); highlightedLinksSet.add(linkDef.id); }
+                    
+                    if (sourceId === node.id) { 
+                        highlightedNodesSet.add(targetId); 
+                        highlightedLinksSet.add(linkDef.id); 
+                    }
+                    else if (targetId === node.id) { 
+                         highlightedNodesSet.add(sourceId); 
+                         highlightedLinksSet.add(linkDef.id); 
+                    }
                 });
                 updateNodeVisuals();
                 focusCameraOnNode(node); 
@@ -608,12 +616,15 @@
         function updateNodeVisuals() {
             if (!Graph) return;
             Graph.graphData().nodes.forEach(n => {
-                const obj = n.__threeObj; if (!obj) return; 
+                const obj = n.__threeObj;
+                if (!obj) return; 
                 const material = obj.material;
                 const labelSprite = obj.children.find(child => child.name === 'labelSprite');
-                if (!labelSprite || !labelSprite.material) return; 
+                
+                if (!labelSprite) return; 
 
-                obj.visible = true; labelSprite.visible = true;
+                obj.visible = true; 
+                labelSprite.visible = true;
 
                 if (currentSelectedNodeData) {
                     if (n.id === currentSelectedNodeData.id) { 
@@ -630,17 +641,16 @@
                     material.opacity = DEFAULT_NODE_OPACITY;
                     labelSprite.material.opacity = DEFAULT_LABEL_OPACITY;
                 }
-                 // Ensure material color is reset if changed by selection (not currently implemented but good practice)
-                material.color.set(n.color || '#cccccc');
             });
-            Graph.linkMaterial(Graph.linkMaterial()); Graph.linkColor(Graph.linkColor());
+            Graph.linkMaterial(Graph.linkMaterial()); 
+            Graph.linkColor(Graph.linkColor());
             Graph.linkDirectionalParticles(Graph.linkDirectionalParticles());
             Graph.linkDirectionalParticleColor(Graph.linkDirectionalParticleColor());
             Graph.linkDirectionalParticleWidth(Graph.linkDirectionalParticleWidth());
         }
         
         function focusCameraOnNode(node) { 
-            if (Graph && node && typeof node.x !== 'undefined') {
+            if (Graph && node && node.__threeObj) {
                 let minX = node.x, maxX = node.x, minY = node.y, maxY = node.y, minZ = node.z, maxZ = node.z;
                 let count = 1;
 
@@ -656,16 +666,11 @@
                 });
                 
                 const center = { x: (minX + maxX) / 2, y: (minY + maxY) / 2, z: (minZ + maxZ) / 2 };
-                const range = Math.max(maxX - minX, maxY - minY, maxZ - minZ, (node.size || 5) * 5); // Increased range factor
-                const distance = range * 0.8 + 80 + (count * 2); // Adjusted distance calculation
+                const range = Math.max(maxX - minX, maxY - minY, maxZ - minZ, node.size * 4 || 20); 
+                const distance = range * 1.0 + 80 + (count * 3); 
 
                 const cameraTarget = new THREE.Vector3(center.x, center.y, center.z);
-                // Adjust camera position to better frame the selection within the DAG
-                const cameraPosition = new THREE.Vector3(
-                    center.x, 
-                    center.y + distance * (count > 1 ? 0.3 : 0.1), // Elevate more if multiple nodes
-                    center.z + distance * 1.1 // Pull back a bit more
-                );
+                const cameraPosition = new THREE.Vector3(center.x, center.y + distance * 0.2, center.z + distance);
                 Graph.cameraPosition(cameraPosition, cameraTarget, 1000);
             }
         }
